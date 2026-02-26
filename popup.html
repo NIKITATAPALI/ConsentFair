@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConsentFair</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="logo-area">⚖️ <strong>ConsentFair</strong></div>
+    <div class="tagline">Cookie Consent Compliance Checker</div>
+  </header>
+
+  <main>
+    <div id="state-loading">
+      <div class="spinner"></div>
+      <p>Scanning page for cookie consent...</p>
+    </div>
+
+    <div id="state-no-data" class="hidden">
+      <div class="icon-large">🌐</div>
+      <p>Navigate to a website to scan for cookie compliance.</p>
+    </div>
+
+    <div id="state-result" class="hidden">
+      <div id="site-name">example.com</div>
+      
+      <div class="score-section">
+        <div class="score-circle" id="score-circle-border">
+          <span id="score-value">0</span>
+          <span class="score-label">/ 100</span>
+        </div>
+        <div id="tier-badge" class="tier-badge">⏳ Pending</div>
+        <div id="banner-status">Checking banner...</div>
+      </div>
+
+      <div class="breakdown-section">
+        <h3>Score Breakdown</h3>
+        
+        <div class="breakdown-row">
+          <span>Banner Presence</span>
+          <div class="breakdown-bar-wrap"><div id="bar-banner" class="breakdown-bar"></div></div>
+          <span id="pts-banner" class="pts-label">0/20</span>
+        </div>
+        
+        <div class="breakdown-row">
+          <span>Accept Button</span>
+          <div class="breakdown-bar-wrap"><div id="bar-accept" class="breakdown-bar"></div></div>
+          <span id="pts-accept" class="pts-label">0/15</span>
+        </div>
+
+        <div class="breakdown-row">
+          <span>Reject Button</span>
+          <div class="breakdown-bar-wrap"><div id="bar-reject" class="breakdown-bar"></div></div>
+          <span id="pts-reject" class="pts-label">0/25</span>
+        </div>
+
+        <div class="breakdown-row">
+          <span>Visual Symmetry</span>
+          <div class="breakdown-bar-wrap"><div id="bar-symmetry" class="breakdown-bar"></div></div>
+          <span id="pts-symmetry" class="pts-label">0/25</span>
+        </div>
+
+        <div class="breakdown-row">
+          <span>Language Clarity</span>
+          <div class="breakdown-bar-wrap"><div id="bar-language" class="breakdown-bar"></div></div>
+          <span id="pts-language" class="pts-label">0/15</span>
+        </div>
+      </div>
+
+      <div id="issues-section" class="hidden">
+        <h3>Issues Found</h3>
+        <div id="issues-list"></div>
+      </div>
+
+      <div id="no-issues" class="hidden">
+        ✅ No compliance issues detected!
+      </div>
+
+      <button id="export-btn" class="export-button hidden">
+        📄 Download Audit Report
+      </button>
+
+      <div style="text-align: center; margin-top: 20px; font-weight: bold; color: #a5b4fc; font-size: 12px;">
+        Developed by Nikita Tapali
+      </div>
+
+      <div class="framework-note" style="margin-top: 8px; padding-top: 12px;">
+        Evaluated against GDPR + India DPDP Act 2023
+      </div>
+    </div>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>
