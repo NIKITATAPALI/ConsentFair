@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConsentFair | Cookie Compliance Auditor</title>
+    <style>
+        :root {
+            --bg-dark: #0f1117;
+            --bg-card: #1a2340;
+            --primary: #4a90d9;
+            --success: #27ae60;
+            --text-main: #ffffff;
+            --text-muted: #8c9bbf;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            text-align: center;
+            padding: 80px 20px 40px;
+            background: linear-gradient(180deg, #0a0c10 0%, var(--bg-dark) 100%);
+        }
+        h1 {
+            font-size: 3.5rem;
+            margin: 0 0 10px;
+            letter-spacing: -1px;
+        }
+        h1 span { color: var(--primary); }
+        .tagline {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: var(--success);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .btn:hover { background-color: #219653; }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .card {
+            background-color: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #2a314d;
+        }
+        .card h3 { color: var(--primary); margin-top: 0; }
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            border-top: 1px solid #2a314d;
+            margin-top: 40px;
+        }
+        footer a { color: var(--primary); text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>⚖️ Consent<span>Fair</span></h1>
+    <p class="tagline">An autonomous, locally-run browser extension that audits website cookie banners against GDPR and the India DPDP Act 2023.</p>
+    <a href="https://microsoftedge.microsoft.com/addons" class="btn">Get it for Microsoft Edge</a>
+</header>
+
+<div class="container">
+    <div class="features">
+        <div class="card">
+            <h3>📊 Autonomous Scoring</h3>
+            <p>Instantly evaluates cookie consent banners and generates a 100-point compliance score based on strict regulatory heuristics.</p>
+        </div>
+        <div class="card">
+            <h3>🕵️ Detect Dark Patterns</h3>
+            <p>Identifies visual asymmetry, negative language framing, and calculates the click-path friction required to reject tracking.</p>
+        </div>
+        <div class="card">
+            <h3>📄 Forensic Audit Reports</h3>
+            <p>Generates professional offline HTML reports complete with a localized viewport screenshot of the exact banner state for your records.</p>
+        </div>
+        <div class="card">
+            <h3>🔒 100% Local & Private</h3>
+            <p>Built for academic research. Zero external servers, zero data tracking, and zero APIs. Everything happens securely in your browser.</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>Developed for academic research by Nikita Tapali at Amity University.</p>
+    <p>
+        <a href="https://github.com/NIKITATAPALI/ConsentFair">View Source on GitHub</a> | 
+        <a href="https://github.com/NIKITATAPALI/ConsentFair/blob/main/PRIVACY_POLICY.md">Privacy Policy</a>
+    </p>
+</footer>
+
+</body>
+</html>
