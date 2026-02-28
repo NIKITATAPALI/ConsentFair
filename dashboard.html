@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ConsentFair - Researcher Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { width: 100vw; min-height: 100vh; max-height: none; background: #0a0c12; margin: 0; padding: 0;}
+    .container { max-width: 1200px; margin: 0 auto; padding: 40px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+    
+    .workflow-box {
+      background: #1a1e2e;
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid #2a314d;
+      margin-bottom: 30px;
+    }
+    .workflow-steps {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .step {
+      text-align: center;
+      flex: 1;
+      padding: 10px;
+      font-size: 11px;
+      color: #8c9bbf;
+      position: relative;
+    }
+    .step-icon { font-size: 24px; margin-bottom: 8px; display: block; }
+    .step:not(:last-child):after {
+      content: "➔";
+      position: absolute;
+      right: -10px;
+      top: 30px;
+      font-size: 18px;
+      color: #4a90d9;
+    }
+
+    textarea { width: 100%; height: 150px; background: #0d1224; color: #fff; border: 1px solid #2a314d; border-radius: 8px; padding: 15px; font-family: monospace; font-size: 12px; box-sizing: border-box; }
+    .btn-bulk { background: #27ae60; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
+    .results-table { width: 100%; border-collapse: collapse; margin-top: 30px; background: #1a1e2e; }
+    .results-table th, .results-table td { padding: 12px; border: 1px solid #2a314d; text-align: left; font-size: 13px; }
+    .results-table th { background: #0d1224; color: #a5b4fc; }
+    
+    .stats-card { background: #1a1e2e; padding: 20px; border-radius: 10px; border-top: 4px solid #4a90d9; display: flex; flex-direction: column; justify-content: space-between; }
+    
+    .native-chart { display: flex; flex-direction: column; gap: 15px; margin-top: 15px; }
+    .chart-bar-row { display: flex; align-items: center; gap: 10px; }
+    .chart-label { width: 120px; font-size: 12px; color: #a5b4fc; }
+    .chart-bar-container { flex: 1; height: 12px; background: #0d1224; border-radius: 6px; overflow: hidden; }
+    .chart-bar { height: 100%; width: 0%; transition: width 0.5s ease; }
+    .chart-val { width: 30px; font-size: 12px; font-weight: bold; text-align: right; }
+
+    #imageModal {
+      display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center;
+    }
+    #modalImg { max-width: 90%; max-height: 90%; border: 3px solid #fff; }
+    .close-modal { position: absolute; top: 20px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer; }
+    
+    .timeout-select {
+      background: #0d1224; color: #fff; border: 1px solid #2a314d; padding: 5px; border-radius: 4px; font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header style="padding: 30px; background: linear-gradient(135deg, #1a2340 0%, #0d1224 100%);">
+    <div class="logo-area" style="font-size: 32px; color: #fff;">⚖️ <strong>ConsentFair</strong> Dashboard</div>
+    <div class="tagline" style="font-size: 16px; color: #8c9bbf;">Forensic Auditing & Dynamic Choice Architecture Analytics</div>
+  </header>
+
+  <div class="container">
+    <div class="workflow-box">
+      <h3 style="margin:0; font-size: 14px; color: #a5b4fc;">ADVANCED AUDIT WORKFLOW: Forensic Session Logic</h3>
+      <div class="workflow-steps">
+        <div class="step"><span class="step-icon">🧹</span><strong>1. Forensic Wipe</strong><br>Clears domain cookies</div>
+        <div class="step"><span class="step-icon">🌐</span><strong>2. Isolated Load</strong><br>Fresh session navigation</div>
+        <div class="step"><span class="step-icon">↕️</span><strong>3. Search Scroll</strong><br>Bottom-to-top banner scan</div>
+        <div class="step"><span class="step-icon">📸</span><strong>4. Element Focus</strong><br>Cross-frame Evidence Capture</div>
+        <div class="step"><span class="step-icon">📁</span><strong>5. Dataset Aggregation</strong><br>CSV export with Base64 img</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="stats-card">
+        <h3 style="color:#a5b4fc; margin-top:0;">Bulk Audit Entry</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <p style="font-size: 12px; color: #8c9bbf; margin: 0;">Paste URLs (one per line).</p>
+          <div>
+            <label style="font-size: 11px; color: #8c9bbf;">Timeout per site:</label>
+            <select id="timeout-val" class="timeout-select">
+              <option value="10000">10s (Fast)</option>
+              <option value="20000">20s</option>
+              <option value="30000" selected>30s (Default)</option>
+              <option value="60000">60s (Slow sites)</option>
+            </select>
+          </div>
+        </div>
+        <textarea id="bulk-urls" placeholder="https://example.com&#10;https://target-site.in"></textarea>
+        <button id="start-bulk" class="btn-bulk" style="margin-top: 15px;">🚀 Start Batch Audit</button>
+      </div>
+
+      <div class="stats-card">
+        <h3 style="color:#a5b4fc; margin-top:0;">Live Analytics Distribution</h3>
+        <div class="native-chart">
+          <div class="chart-bar-row">
+            <span class="chart-label">Compliant (70+)</span>
+            <div class="chart-bar-container"><div id="bar-comp" class="chart-bar" style="background:#27ae60;"></div></div>
+            <span id="val-comp" class="chart-val" style="color:#27ae60;">0</span>
+          </div>
+          <div class="chart-bar-row">
+            <span class="chart-label">Partial (40-69)</span>
+            <div class="chart-bar-container"><div id="bar-part" class="chart-bar" style="background:#e67e22;"></div></div>
+            <span id="val-part" class="chart-val" style="color:#e67e22;">0</span>
+          </div>
+          <div class="chart-bar-row">
+            <span class="chart-label">Non-Compliant (<40)</span>
+            <div class="chart-bar-container"><div id="bar-non" class="chart-bar" style="background:#c0392b;"></div></div>
+            <span id="val-non" class="chart-val" style="color:#c0392b;">0</span>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 25px;">
+          <div style="font-size: 12px; color:#fff">Processed: <span id="count-processed">0</span></div>
+          <div style="font-size: 12px; color:#fff">Mean Score: <span id="avg-score">0</span></div>
+        </div>
+        <button id="download-csv" class="btn-bulk" style="background: #e67e22; margin-top: 15px;">📊 Export Research CSV</button>
+      </div>
+    </div>
+
+    <h3 style="color: #a5b4fc; font-size: 16px;">Forensic Dataset Table</h3>
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th style="width:30%">Website</th>
+          <th>Score</th>
+          <th>Tier</th>
+          <th>Patterns</th>
+          <th>CAI</th>
+          <th>Evidence</th>
+        </tr>
+      </thead>
+      <tbody id="bulk-results-body"></tbody>
+    </table>
+  </div>
+
+  <div id="imageModal">
+    <span class="close-modal" id="closeModalBtn">&times;</span>
+    <img id="modalImg">
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

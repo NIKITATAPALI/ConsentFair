@@ -1,148 +1,111 @@
-function calculateScore(bannerData) {
-  let score = 0;
-  const issues = [];
+/**
+ * ConsentFair Scoring & Regulatory Mapping Engine
+ * Aligned with GDPR (EU) and India DPDP Act 2023
+ */
 
-  // Export explicit button status for the report
+const DP_WEIGHTS = {
+  'DP-VM': 10, // Visual Misdirection
+  'DP-PT': 20, // Pre-ticked Boxes
+  'DP-FA': 25, // Forced Action
+  'DP-RM': 15, // Roach Motel (Effort Asymmetry)
+  'DP-UF': 10, // Urgency/Fear
+  'DP-HI': 10, // Hidden Information
+  'DP-CL': 10, // Confusing Language
+  'DP-NG': 10, // Nagging
+  'DP-PB': 15, // Purpose Bundling
+  'DP-FH': 15  // False Hierarchy
+};
+
+const LEGAL_MAP = {
+  'DP-VM': { gdpr: "Art. 4(11), 7", dpdp: "Section 6", desc: "Biased UI nudging users toward acceptance." },
+  'DP-PT': { gdpr: "Art. 4(11), Recital 32", dpdp: "Section 6", desc: "Pre-selected non-essential cookies." },
+  'DP-FA': { gdpr: "Art. 7(3)", dpdp: "Section 6, 9", desc: "No explicit option to decline/reject." },
+  'DP-RM': { gdpr: "Art. 7(3)", dpdp: "Section 6, 9", desc: "Rejection path significantly harder than acceptance." },
+  'DP-UF': { gdpr: "Art. 7", dpdp: "Section 6", desc: "Language implying negative consequences for refusal." },
+  'DP-HI': { gdpr: "Art. 13, 14", dpdp: "Section 7", desc: "Privacy details buried in multiple layers." },
+  'DP-CL': { gdpr: "Art. 4(11)", dpdp: "Section 6", desc: "Ambiguous language or double negatives." },
+  'DP-NG': { gdpr: "Art. 7", dpdp: "Section 6", desc: "Repeated requests after refusal." },
+  'DP-PB': { gdpr: "Art. 6(1)(a)", dpdp: "Section 5, 6", desc: "Lack of granular choice across cookie purposes." },
+  'DP-FH': { gdpr: "Art. 7", dpdp: "Section 6", desc: "Visual hierarchy favoring 'Accept All' over management." }
+};
+
+function calculateScore(scanData) {
+  let score = 100;
+  const detectedPatterns = [];
+
+  // Default button status to avoid UI crashes
   const buttonStatus = {
-    accept: bannerData.acceptBtn && bannerData.acceptBtn.found,
-    reject: bannerData.rejectBtn && bannerData.rejectBtn.found,
-    manage: bannerData.manageBtn && bannerData.manageBtn.found
+    accept: scanData.acceptBtn ? scanData.acceptBtn.found : false,
+    reject: scanData.rejectBtn ? scanData.rejectBtn.found : false,
+    manage: scanData.manageBtn ? scanData.manageBtn.found : false
   };
 
-  // CHECK 1: BANNER PRESENCE (20 points)
-  if (bannerData.bannerFound) {
-    score += 20;
-  } else {
-    issues.push({
-      type: "No Cookie Banner",
-      severity: "Critical",
-      description: "No cookie consent banner was detected on this page.",
-      gdpr: "Art. 13 — Transparency & Notice",
-      dpdp: "Sec. 5 — Notice Obligation"
-    });
-  }
-
-  // CHECK 2: ACCEPT BUTTON (15 points)
-  if (bannerData.bannerFound && buttonStatus.accept) {
-    score += 15;
-  } else if (bannerData.bannerFound) {
-    issues.push({
-      type: "No Accept Button",
-      severity: "High",
-      description: "A banner was found, but a clear 'Accept' button is missing.",
-      gdpr: "Art. 4(11) — Unambiguous consent",
-      dpdp: "Sec. 6(1) — Voluntary & Accessible Consent"
-    });
-  }
-
-  // CHECK 3: REJECT BUTTON (25 points)
-  if (buttonStatus.reject) {
-    if (bannerData.clicksToReject <= 1) {
-      score += 25;
-    } else if (bannerData.clicksToReject === 2) {
-      score += 15;
-      issues.push({
-        type: "Effort Asymmetry",
-        severity: "High",
-        description: "Rejecting cookies takes more clicks than accepting them.",
-        gdpr: "Art. 7(3) — Withdrawal as Easy as Consent",
-        dpdp: "Sec. 6(1) — Voluntary & Accessible Consent"
-      });
-    } else {
-      score += 5;
-      issues.push({
-        type: "Effort Asymmetry",
-        severity: "High",
-        description: "Rejecting cookies requires excessive navigation (3+ clicks).",
-        gdpr: "Art. 7(3) — Withdrawal as Easy as Consent",
-        dpdp: "Sec. 6(1) — Voluntary & Accessible Consent"
-      });
-    }
-  } else {
-    if (bannerData.hasImpliedConsent) {
-      issues.push({
-        type: "Implied Consent",
+  if (!scanData.bannerFound) {
+    return {
+      score: 0,
+      tier: "Non-Compliant",
+      tierColor: "#c0392b",
+      tierEmoji: "❌",
+      issues: [{
+        type: "NO_BANNER",
+        category: "No Cookie Banner",
         severity: "Critical",
-        description: "Site uses implied consent (e.g., 'by continuing to use') without an explicit reject option.",
-        gdpr: "Art. 4(11) — Unambiguous consent",
-        dpdp: "Sec. 6(2) — Informed consent"
-      });
-    } else if (bannerData.bannerFound) {
-      issues.push({
-        type: "No Reject Button",
-        severity: "Critical",
-        description: "No option to reject or decline cookies was found on the first layer.",
-        gdpr: "Art. 7(3) — Withdrawal as Easy as Consent",
-        dpdp: "Sec. 6(1) — Voluntary & Accessible Consent"
-      });
-    }
+        description: "No cookie consent banner was detected.",
+        gdpr: "Art. 13",
+        dpdp: "Section 5"
+      }],
+      buttonStatus,
+      timestamp: Date.now(),
+      cai: "N/A"
+    };
   }
 
-  // CHECK 4: VISUAL SYMMETRY (25 points)
-  let symmetryScore = 25;
-  if (bannerData.visualSymmetry) {
-    if (bannerData.visualSymmetry.backgroundDiffers) symmetryScore -= 10;
-    if (bannerData.visualSymmetry.fontWeightDiffers) symmetryScore -= 5;
-    if (bannerData.visualSymmetry.borderDiffers) symmetryScore -= 5;
-    if (bannerData.visualSymmetry.sizeDiffers) symmetryScore -= 5;
-    
-    symmetryScore = Math.max(0, symmetryScore);
-    score += symmetryScore;
-
-    if (symmetryScore < 25 && bannerData.bannerFound) {
-      let severity = "Low";
-      if (symmetryScore <= 5) severity = "High";
-      else if (symmetryScore <= 15) severity = "Medium";
-
-      issues.push({
-        type: "Visual Asymmetry",
-        severity: severity,
-        description: "Accept and Reject buttons have differing visual weights (colors, sizes, borders), nudging users to accept.",
-        gdpr: "Art. 7 — Freely Given Consent (biased UI)",
-        dpdp: "Sec. 6(1) — Voluntary & Accessible Consent"
-      });
-    }
-  } else {
-    score += 25; 
+  // 1. DP-FA: Forced Action (No Reject Button)
+  if (!buttonStatus.reject) {
+    detectedPatterns.push('DP-FA');
   }
 
-  // CHECK 5: LANGUAGE CLARITY (15 points)
-  let languageScore = 15;
-  if (buttonStatus.reject && bannerData.rejectBtn.text) {
-    const rText = bannerData.rejectBtn.text.toLowerCase();
-    let unclear = true;
-    
-    if (rText.includes("i do not agree") || rText.includes("do not agree")) languageScore -= 8;
-    if (rText.includes("to refuse")) languageScore -= 8;
-    if (rText.includes("without cookies")) languageScore -= 5;
-    if (rText.includes("no thanks")) languageScore -= 5;
-    
-    const clearTerms = ["reject", "decline", "refuse", "no", "opt-out", "opt out", "necessary", "essential"];
-    for (const term of clearTerms) {
-      if (rText.includes(term)) {
-        unclear = false;
-        break;
-      }
-    }
-    
-    if (unclear) languageScore -= 5;
-    languageScore = Math.max(0, languageScore);
-    score += languageScore;
-
-    if (languageScore < 15) {
-      issues.push({
-        type: "Negative/Misleading Framing",
-        severity: "Low",
-        description: "The language used for declining cookies is emotionally manipulative or unclear.",
-        gdpr: "Art. 7 — Freely Given Consent (manipulative language)",
-        dpdp: "Sec. 6(2) — Informed consent"
-      });
-    }
-  } else {
-    score += 15; 
+  // 2. DP-VM: Visual Misdirection
+  if (scanData.visualSymmetry && (scanData.visualSymmetry.backgroundDiffers || scanData.visualSymmetry.sizeDiffers)) {
+    detectedPatterns.push('DP-VM');
   }
 
-  // TIER CLASSIFICATION
+  // 3. DP-RM: Roach Motel (Effort Asymmetry)
+  if (!buttonStatus.reject && buttonStatus.manage) {
+    detectedPatterns.push('DP-RM');
+  }
+
+  // 4. DP-PT: Pre-ticked Boxes
+  if (scanData.hasPreselected) {
+    detectedPatterns.push('DP-PT');
+  }
+
+  // 5. DP-UF: Urgency/Fear
+  if (scanData.hasNegativeFraming) {
+    detectedPatterns.push('DP-UF');
+  }
+
+  // 6. DP-PB: Purpose Bundling
+  if (!buttonStatus.manage && buttonStatus.accept) {
+    detectedPatterns.push('DP-PB');
+  }
+
+  // Deduct points
+  detectedPatterns.forEach(code => {
+    score -= (DP_WEIGHTS[code] || 0);
+  });
+
+  score = Math.max(0, score);
+
+  const issues = detectedPatterns.map(code => ({
+    type: code,
+    category: getCategoryName(code),
+    severity: DP_WEIGHTS[code] >= 20 ? "Critical" : DP_WEIGHTS[code] >= 15 ? "High" : "Medium",
+    description: LEGAL_MAP[code].desc,
+    gdpr: LEGAL_MAP[code].gdpr,
+    dpdp: LEGAL_MAP[code].dpdp
+  }));
+
   let tier = "Non-Compliant";
   let tierColor = "#c0392b";
   let tierEmoji = "❌";
@@ -163,9 +126,26 @@ function calculateScore(bannerData) {
     tierColor,
     tierEmoji,
     issues,
-    buttonStatus, // Exported for the report
-    timestamp: Date.now()
+    buttonStatus,
+    timestamp: Date.now(),
+    cai: scanData.clicksToReject === 99 ? "N/A" : ((scanData.clicksToReject - 1) / 1).toFixed(2)
   };
+}
+
+function getCategoryName(code) {
+  const names = {
+    'DP-VM': 'Visual Misdirection',
+    'DP-PT': 'Pre-ticked Boxes',
+    'DP-FA': 'Forced Action',
+    'DP-RM': 'Roach Motel',
+    'DP-UF': 'Urgency/Fear',
+    'DP-HI': 'Hidden Information',
+    'DP-CL': 'Confusing Language',
+    'DP-NG': 'Nagging',
+    'DP-PB': 'Purpose Bundling',
+    'DP-FH': 'False Hierarchy'
+  };
+  return names[code] || code;
 }
 
 if (typeof module !== "undefined") {

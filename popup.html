@@ -5,6 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ConsentFair</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    .controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 15px;
+      background: #1a1e2e;
+      border-bottom: 1px solid #2a314d;
+    }
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 20px;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #c0392b;
+      transition: .4s;
+      border-radius: 20px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px; width: 14px;
+      left: 3px; bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider { background-color: #27ae60; }
+    input:checked + .slider:before { transform: translateX(20px); }
+    
+    .dashboard-link {
+      background: #4a90d9;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -12,7 +59,23 @@
     <div class="tagline">Cookie Consent Compliance Checker</div>
   </header>
 
+  <div class="controls-row">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <label class="toggle-switch">
+        <input type="checkbox" id="extension-toggle" checked>
+        <span class="slider"></span>
+      </label>
+      <span style="font-size: 11px; font-weight: 600;" id="toggle-label">Active</span>
+    </div>
+    <button id="open-dashboard" class="dashboard-link">Open Dashboard ↗</button>
+  </div>
+
   <main>
+    <div id="state-disabled" class="hidden" style="text-align: center; padding: 40px 20px; color: #8c9bbf;">
+      <div class="icon-large">⏸️</div>
+      <p>Extension is currently disabled.<br>Toggle "On" to scan websites.</p>
+    </div>
+
     <div id="state-loading">
       <div class="spinner"></div>
       <p>Scanning page for cookie consent...</p>
@@ -37,36 +100,11 @@
 
       <div class="breakdown-section">
         <h3>Score Breakdown</h3>
-        
-        <div class="breakdown-row">
-          <span>Banner Presence</span>
-          <div class="breakdown-bar-wrap"><div id="bar-banner" class="breakdown-bar"></div></div>
-          <span id="pts-banner" class="pts-label">0/20</span>
-        </div>
-        
-        <div class="breakdown-row">
-          <span>Accept Button</span>
-          <div class="breakdown-bar-wrap"><div id="bar-accept" class="breakdown-bar"></div></div>
-          <span id="pts-accept" class="pts-label">0/15</span>
-        </div>
-
-        <div class="breakdown-row">
-          <span>Reject Button</span>
-          <div class="breakdown-bar-wrap"><div id="bar-reject" class="breakdown-bar"></div></div>
-          <span id="pts-reject" class="pts-label">0/25</span>
-        </div>
-
-        <div class="breakdown-row">
-          <span>Visual Symmetry</span>
-          <div class="breakdown-bar-wrap"><div id="bar-symmetry" class="breakdown-bar"></div></div>
-          <span id="pts-symmetry" class="pts-label">0/25</span>
-        </div>
-
-        <div class="breakdown-row">
-          <span>Language Clarity</span>
-          <div class="breakdown-bar-wrap"><div id="bar-language" class="breakdown-bar"></div></div>
-          <span id="pts-language" class="pts-label">0/15</span>
-        </div>
+        <div class="breakdown-row"><span>Banner Presence</span><div class="breakdown-bar-wrap"><div id="bar-banner" class="breakdown-bar"></div></div><span id="pts-banner" class="pts-label">0/20</span></div>
+        <div class="breakdown-row"><span>Accept Button</span><div class="breakdown-bar-wrap"><div id="bar-accept" class="breakdown-bar"></div></div><span id="pts-accept" class="pts-label">0/15</span></div>
+        <div class="breakdown-row"><span>Reject Button</span><div class="breakdown-bar-wrap"><div id="bar-reject" class="breakdown-bar"></div></div><span id="pts-reject" class="pts-label">0/25</span></div>
+        <div class="breakdown-row"><span>Visual Symmetry</span><div class="breakdown-bar-wrap"><div id="bar-symmetry" class="breakdown-bar"></div></div><span id="pts-symmetry" class="pts-label">0/25</span></div>
+        <div class="breakdown-row"><span>Language Clarity</span><div class="breakdown-bar-wrap"><div id="bar-language" class="breakdown-bar"></div></div><span id="pts-language" class="pts-label">0/15</span></div>
       </div>
 
       <div id="issues-section" class="hidden">
@@ -74,21 +112,12 @@
         <div id="issues-list"></div>
       </div>
 
-      <div id="no-issues" class="hidden">
-        ✅ No compliance issues detected!
-      </div>
+      <div id="no-issues" class="hidden">✅ No compliance issues detected!</div>
 
-      <button id="export-btn" class="export-button hidden">
-        📄 Download Audit Report
-      </button>
+      <button id="export-btn" class="export-button hidden">📄 Download Audit Report</button>
 
-      <div style="text-align: center; margin-top: 20px; font-weight: bold; color: #a5b4fc; font-size: 12px;">
-        Developed by Nikita Tapali
-      </div>
-
-      <div class="framework-note" style="margin-top: 8px; padding-top: 12px;">
-        Evaluated against GDPR + India DPDP Act 2023
-      </div>
+      <div style="text-align: center; margin-top: 20px; font-weight: bold; color: #a5b4fc; font-size: 12px;">Developed by Nikita Tapali</div>
+      <div class="framework-note">Evaluated against GDPR + India DPDP Act 2023</div>
     </div>
   </main>
   <script src="popup.js"></script>
