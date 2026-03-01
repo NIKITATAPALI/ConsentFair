@@ -1,119 +1,1435 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ConsentFair | Cookie Compliance Auditor</title>
-    <style>
-        :root {
-            --bg-dark: #0f1117;
-            --bg-card: #1a2340;
-            --primary: #4a90d9;
-            --success: #27ae60;
-            --text-main: #ffffff;
-            --text-muted: #8c9bbf;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-        }
-        header {
-            text-align: center;
-            padding: 80px 20px 40px;
-            background: linear-gradient(180deg, #0a0c10 0%, var(--bg-dark) 100%);
-        }
-        h1 {
-            font-size: 3.5rem;
-            margin: 0 0 10px;
-            letter-spacing: -1px;
-        }
-        h1 span { color: var(--primary); }
-        .tagline {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto 30px;
-        }
-        .btn {
-            display: inline-block;
-            background-color: var(--success);
-            color: white;
-            padding: 15px 30px;
-            text-decoration: none;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border-radius: 8px;
-            transition: background 0.3s;
-        }
-        .btn:hover { background-color: #219653; }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 40px;
-        }
-        .card {
-            background-color: var(--bg-card);
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid #2a314d;
-        }
-        .card h3 { color: var(--primary); margin-top: 0; }
-        footer {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-            border-top: 1px solid #2a314d;
-            margin-top: 40px;
-        }
-        footer a { color: var(--primary); text-decoration: none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ConsentFair — Cookie Consent Compliance Auditor</title>
+<meta name="description" content="ConsentFair is a free, open-source browser extension that forensically audits cookie consent banners against GDPR and India's DPDP Act 2023. Detect all 10 dark patterns instantly.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   RESET & ROOT
+═══════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #060810;
+  --bg2:       #0b0f1a;
+  --bg3:       #0f1421;
+  --surface:   #131929;
+  --border:    #1c2540;
+  --border2:   #253060;
+  --blue:      #3d7ef5;
+  --blue-dim:  #2a5db5;
+  --cyan:      #00d4ff;
+  --green:     #22c55e;
+  --orange:    #f59e0b;
+  --red:       #ef4444;
+  --text:      #e8ecf8;
+  --text2:     #a0aec8;
+  --text3:     #5a6a90;
+  --mono:      'JetBrains Mono', monospace;
+  --display:   'Bebas Neue', sans-serif;
+  --body:      'DM Sans', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; }
+
+/* ═══════════════════════════════════════════════════════════
+   BACKGROUND EFFECTS
+═══════════════════════════════════════════════════════════ */
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(61,126,245,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(61,126,245,0.035) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.bg-glow {
+  position: fixed; z-index: 0; pointer-events: none;
+  border-radius: 50%; filter: blur(120px); opacity: 0.12;
+}
+.bg-glow-1 { width: 700px; height: 700px; background: var(--blue); top: -200px; right: -200px; }
+.bg-glow-2 { width: 500px; height: 500px; background: var(--cyan); bottom: 20%; left: -200px; }
+.bg-glow-3 { width: 400px; height: 400px; background: #7c3aed; top: 50%; right: 10%; }
+
+/* ═══════════════════════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 5%;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 68px;
+  background: rgba(6, 8, 16, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: var(--display);
+  font-size: 26px; letter-spacing: 2px; color: #fff;
+}
+.nav-logo span { color: var(--blue); }
+
+.nav-links {
+  display: flex; align-items: center; gap: 36px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 13px; font-weight: 500;
+  color: var(--text2); letter-spacing: 0.3px;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: #fff; }
+
+.nav-cta {
+  background: var(--blue); color: #fff !important;
+  padding: 9px 22px; border-radius: 6px;
+  font-weight: 600 !important; font-size: 13px !important;
+  transition: background 0.2s !important;
+}
+.nav-cta:hover { background: #5a92f7 !important; color: #fff !important; }
+
+/* ═══════════════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════════════ */
+.hero {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 120px 5% 80px;
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(61,126,245,0.1);
+  border: 1px solid rgba(61,126,245,0.3);
+  padding: 6px 16px; border-radius: 100px;
+  font-family: var(--mono); font-size: 11px;
+  color: var(--cyan); letter-spacing: 1px;
+  margin-bottom: 32px;
+  animation: fadeUp 0.6s ease both;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.hero h1 {
+  font-family: var(--display);
+  font-size: clamp(64px, 10vw, 130px);
+  line-height: 0.9;
+  letter-spacing: 4px;
+  color: #fff;
+  margin-bottom: 8px;
+  animation: fadeUp 0.7s 0.1s ease both;
+}
+.hero h1 .accent { color: var(--blue); }
+.hero h1 .accent2 {
+  background: linear-gradient(90deg, var(--cyan), var(--blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: clamp(16px, 2.5vw, 22px);
+  font-weight: 300;
+  color: var(--text2);
+  max-width: 680px;
+  margin: 24px auto 48px;
+  line-height: 1.5;
+  animation: fadeUp 0.7s 0.2s ease both;
+}
+.hero-sub strong { color: var(--text); font-weight: 600; }
+
+.hero-actions {
+  display: flex; align-items: center; gap: 16px;
+  flex-wrap: wrap; justify-content: center;
+  animation: fadeUp 0.7s 0.3s ease both;
+  margin-bottom: 72px;
+}
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--blue); color: #fff;
+  padding: 16px 32px; border-radius: 8px;
+  font-weight: 600; font-size: 15px;
+  letter-spacing: 0.3px;
+  transition: all 0.25s;
+  box-shadow: 0 0 40px rgba(61,126,245,0.35);
+}
+.btn-primary:hover {
+  background: #5a92f7;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 50px rgba(61,126,245,0.5);
+}
+
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: transparent; color: var(--text2);
+  padding: 16px 32px; border-radius: 8px;
+  font-weight: 500; font-size: 15px;
+  border: 1px solid var(--border2);
+  transition: all 0.25s;
+}
+.btn-secondary:hover {
+  color: #fff; border-color: var(--text2);
+  transform: translateY(-2px);
+}
+
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--text2); font-size: 14px;
+  padding: 10px 20px; border-radius: 6px;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+.btn-ghost:hover { color: #fff; border-color: var(--border2); }
+
+/* Score demo widget */
+.hero-demo {
+  animation: fadeUp 0.7s 0.4s ease both;
+  width: 100%; max-width: 780px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 40px 120px rgba(0,0,0,0.6);
+}
+
+.demo-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 18px;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+}
+.demo-dot { width: 12px; height: 12px; border-radius: 50%; }
+.demo-dot-r { background: #ef4444; }
+.demo-dot-y { background: #f59e0b; }
+.demo-dot-g { background: #22c55e; }
+.demo-url {
+  flex: 1; text-align: center;
+  font-family: var(--mono); font-size: 11px;
+  color: var(--text3); background: var(--bg2);
+  padding: 4px 14px; border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.demo-body {
+  padding: 28px 32px;
+  display: grid; grid-template-columns: 160px 1fr;
+  gap: 28px; align-items: start;
+}
+
+.demo-score-col { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.demo-circle {
+  width: 110px; height: 110px; border-radius: 50%;
+  border: 5px solid var(--orange);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: var(--bg2);
+}
+.demo-score-num {
+  font-family: var(--display); font-size: 42px;
+  color: var(--orange); line-height: 1;
+}
+.demo-score-lbl { font-size: 11px; color: var(--text3); }
+.demo-tier {
+  background: rgba(245,158,11,0.12);
+  border: 1px solid rgba(245,158,11,0.3);
+  color: var(--orange); padding: 4px 14px;
+  border-radius: 100px; font-size: 11px; font-weight: 600;
+}
+.demo-hostname { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+
+.demo-right { display: flex; flex-direction: column; gap: 10px; }
+.demo-bars-title {
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--text3); margin-bottom: 4px;
+}
+.demo-bar-row {
+  display: grid; grid-template-columns: 110px 1fr 38px;
+  align-items: center; gap: 10px; font-size: 11px;
+}
+.demo-track {
+  height: 5px; background: var(--bg2);
+  border-radius: 3px; overflow: hidden;
+}
+.demo-fill { height: 100%; border-radius: 3px; }
+.demo-pts { text-align: right; color: var(--text3); font-family: var(--mono); font-size: 10px; }
+
+.demo-issues { margin-top: 8px; }
+.demo-issue {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; padding: 6px 10px;
+  background: var(--bg2); border-radius: 5px;
+  margin-bottom: 5px; border-left: 3px solid;
+}
+.demo-issue-crit { border-left-color: var(--red); }
+.demo-issue-high { border-left-color: var(--orange); }
+.demo-issue-med  { border-left-color: #a78bfa; }
+.demo-badge {
+  font-size: 9px; padding: 1px 6px;
+  border-radius: 3px; background: rgba(255,255,255,0.08);
+  color: var(--text2); margin-left: auto; white-space: nowrap;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STATS STRIP
+═══════════════════════════════════════════════════════════ */
+.stats-strip {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+  padding: 28px 5%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: var(--display); font-size: 44px;
+  letter-spacing: 2px; line-height: 1;
+  background: linear-gradient(135deg, #fff, var(--blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-label { font-size: 12px; color: var(--text3); margin-top: 4px; letter-spacing: 0.3px; }
+
+/* ═══════════════════════════════════════════════════════════
+   SECTIONS
+═══════════════════════════════════════════════════════════ */
+section {
+  position: relative; z-index: 1;
+  padding: 100px 5%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+section.full-width { max-width: none; }
+
+.section-tag {
+  display: inline-block;
+  font-family: var(--mono); font-size: 10px;
+  color: var(--cyan); letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 16px;
+}
+.section-title {
+  font-family: var(--display);
+  font-size: clamp(36px, 5vw, 60px);
+  letter-spacing: 2px; line-height: 1;
+  color: #fff; margin-bottom: 20px;
+}
+.section-title span { color: var(--blue); }
+.section-body {
+  font-size: 17px; font-weight: 300;
+  color: var(--text2); max-width: 600px;
+  line-height: 1.65;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HOW IT WORKS
+═══════════════════════════════════════════════════════════ */
+.steps-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 2px; margin-top: 60px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+}
+.step-card {
+  background: var(--bg2); padding: 30px 20px;
+  display: flex; flex-direction: column;
+  align-items: flex-start; gap: 14px;
+  transition: background 0.3s;
+  position: relative;
+}
+.step-card:hover { background: var(--surface); }
+
+.step-num {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--blue); letter-spacing: 1px;
+}
+.step-icon { font-size: 32px; }
+.step-title { font-weight: 600; font-size: 14px; color: #fff; }
+.step-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+.step-tag {
+  font-family: var(--mono); font-size: 9px;
+  color: var(--text3); background: var(--bg);
+  padding: 2px 7px; border-radius: 3px;
+  border: 1px solid var(--border);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DARK PATTERNS GRID
+═══════════════════════════════════════════════════════════ */
+.patterns-intro {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center; margin-bottom: 70px;
+}
+.patterns-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 1000px) {
+  .patterns-grid { grid-template-columns: repeat(5, 1fr); }
+}
+
+.pattern-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px 16px;
+  transition: all 0.3s; cursor: default;
+  position: relative; overflow: hidden;
+}
+.pattern-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.3s;
+}
+.pattern-card:hover { border-color: var(--border2); transform: translateY(-4px); }
+.pattern-card:hover::before { transform: scaleX(1); }
+
+.pattern-code {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--blue); letter-spacing: 1px; margin-bottom: 10px;
+}
+.pattern-icon { font-size: 26px; margin-bottom: 10px; }
+.pattern-name { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+.pattern-desc { font-size: 11px; color: var(--text2); line-height: 1.45; }
+.pattern-weight {
+  margin-top: 10px; display: inline-block;
+  background: rgba(239,68,68,0.1); color: #ef4444;
+  border: 1px solid rgba(239,68,68,0.2);
+  font-family: var(--mono); font-size: 10px;
+  padding: 2px 8px; border-radius: 3px;
+}
+
+/* severity colours */
+.pc-crit .pattern-weight { background: rgba(239,68,68,0.1); color: #ef4444; border-color: rgba(239,68,68,0.2); }
+.pc-high .pattern-weight { background: rgba(245,158,11,0.1); color: var(--orange); border-color: rgba(245,158,11,0.2); }
+.pc-med  .pattern-weight { background: rgba(99,102,241,0.1); color: #818cf8; border-color: rgba(99,102,241,0.2); }
+
+/* ═══════════════════════════════════════════════════════════
+   FEATURES BENTO
+═══════════════════════════════════════════════════════════ */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto;
+  gap: 12px; margin-top: 60px;
+}
+.bento-cell {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 28px;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.bento-cell:hover { border-color: var(--border2); transform: translateY(-3px); }
+.bento-cell.wide { grid-column: span 2; }
+.bento-cell.tall { grid-row: span 2; }
+
+.bento-icon { font-size: 36px; margin-bottom: 16px; }
+.bento-title { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+.bento-desc { font-size: 13px; color: var(--text2); line-height: 1.55; }
+
+.bento-badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+.bento-badge {
+  font-family: var(--mono); font-size: 10px;
+  padding: 3px 9px; border-radius: 4px;
+  background: rgba(61,126,245,0.1);
+  border: 1px solid rgba(61,126,245,0.25);
+  color: var(--blue);
+}
+
+.lang-list {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px;
+}
+.lang-pill {
+  font-size: 11px; padding: 4px 12px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 100px; color: var(--text2);
+}
+
+.cai-formula {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 18px;
+  font-family: var(--mono); font-size: 13px;
+  color: var(--cyan); margin-top: 16px;
+  letter-spacing: 0.5px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LEGAL COVERAGE
+═══════════════════════════════════════════════════════════ */
+.legal-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 24px; margin-top: 60px;
+}
+.legal-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 36px;
+  position: relative; overflow: hidden;
+}
+.legal-card::after {
+  content: ''; position: absolute;
+  bottom: 0; left: 0; right: 0; height: 3px;
+}
+.legal-gdpr::after { background: linear-gradient(90deg, #003399, #ffcc00); }
+.legal-dpdp::after { background: linear-gradient(90deg, #ff9933, #ffffff, #138808); }
+
+.legal-flag { font-size: 40px; margin-bottom: 16px; }
+.legal-name { font-family: var(--display); font-size: 30px; letter-spacing: 2px; color: #fff; margin-bottom: 6px; }
+.legal-full { font-size: 12px; color: var(--text3); margin-bottom: 20px; font-family: var(--mono); }
+.legal-desc { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 24px; }
+.legal-articles { display: flex; flex-direction: column; gap: 8px; }
+.legal-article {
+  display: flex; gap: 10px; align-items: flex-start;
+  font-size: 12px; padding: 8px 12px;
+  background: var(--bg2); border-radius: 6px;
+  border-left: 3px solid var(--blue);
+}
+.article-ref { font-family: var(--mono); color: var(--blue); font-size: 11px; white-space: nowrap; }
+.article-desc { color: var(--text2); }
+
+/* ═══════════════════════════════════════════════════════════
+   WHAT'S NEW
+═══════════════════════════════════════════════════════════ */
+.changelog {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 80px 5%;
+}
+.changelog-inner { max-width: 1280px; margin: 0 auto; }
+
+.changelog-grid {
+  display: grid; grid-template-columns: 240px 1fr;
+  gap: 60px; margin-top: 50px;
+}
+.changelog-versions { display: flex; flex-direction: column; gap: 4px; }
+.version-btn {
+  padding: 10px 16px; border-radius: 6px;
+  background: none; border: 1px solid transparent;
+  color: var(--text2); font-size: 13px; cursor: pointer;
+  text-align: left; display: flex; justify-content: space-between;
+  align-items: center; font-family: var(--body);
+  transition: all 0.2s;
+}
+.version-btn.active {
+  background: var(--surface); border-color: var(--border);
+  color: #fff;
+}
+.version-badge {
+  font-family: var(--mono); font-size: 10px;
+  padding: 2px 7px; border-radius: 3px;
+  background: rgba(34,197,94,0.1); color: var(--green);
+}
+.version-badge.old {
+  background: rgba(90,106,144,0.1); color: var(--text3);
+}
+
+.changelog-items { display: flex; flex-direction: column; gap: 10px; }
+.change-item {
+  display: flex; gap: 14px; padding: 14px 16px;
+  background: var(--surface); border-radius: 8px;
+  border: 1px solid var(--border); align-items: flex-start;
+}
+.change-type {
+  font-family: var(--mono); font-size: 10px;
+  padding: 3px 8px; border-radius: 3px;
+  white-space: nowrap; flex-shrink: 0; margin-top: 1px;
+}
+.ct-new  { background: rgba(34,197,94,0.1); color: var(--green); }
+.ct-fix  { background: rgba(61,126,245,0.1); color: var(--blue); }
+.ct-imp  { background: rgba(245,158,11,0.1); color: var(--orange); }
+.change-text { font-size: 13px; color: var(--text2); line-height: 1.5; }
+.change-text strong { color: #fff; }
+
+/* ═══════════════════════════════════════════════════════════
+   PRIVACY BADGE
+═══════════════════════════════════════════════════════════ */
+.privacy-strip {
+  background: linear-gradient(135deg, rgba(34,197,94,0.06), rgba(34,197,94,0.02));
+  border: 1px solid rgba(34,197,94,0.2);
+  border-radius: 16px; padding: 48px;
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 40px; margin-top: 70px;
+}
+.priv-item { display: flex; flex-direction: column; gap: 10px; }
+.priv-icon { font-size: 32px; }
+.priv-title { font-size: 16px; font-weight: 600; color: #fff; }
+.priv-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+/* ═══════════════════════════════════════════════════════════
+   RESEARCH SECTION
+═══════════════════════════════════════════════════════════ */
+.research-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 48px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center;
+  margin-top: 60px;
+}
+.research-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(61,126,245,0.1);
+  border: 1px solid rgba(61,126,245,0.2);
+  padding: 6px 14px; border-radius: 6px;
+  font-size: 12px; color: var(--blue); margin-bottom: 20px;
+}
+.research-meta { display: flex; flex-direction: column; gap: 12px; }
+.meta-row { display: flex; gap: 14px; align-items: flex-start; }
+.meta-key {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--text3); letter-spacing: 1px;
+  text-transform: uppercase; min-width: 90px; padding-top: 2px;
+}
+.meta-val { font-size: 13px; color: var(--text2); }
+
+.enroll-no {
+  font-family: var(--mono); font-size: 20px;
+  color: var(--blue); letter-spacing: 3px;
+  background: var(--bg2); border: 1px solid var(--border);
+  padding: 16px 24px; border-radius: 8px;
+  margin-top: 24px; display: block;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CTA SECTION
+═══════════════════════════════════════════════════════════ */
+.cta-section {
+  text-align: center;
+  padding: 120px 5%;
+  position: relative; z-index: 1;
+}
+.cta-glow {
+  position: absolute; z-index: -1;
+  width: 600px; height: 600px;
+  background: var(--blue);
+  filter: blur(160px); opacity: 0.07;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.cta-section .section-title { font-size: clamp(40px, 6vw, 80px); }
+.cta-section .section-body { max-width: 500px; margin: 0 auto 48px; }
+.cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+.btn-edge {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: linear-gradient(135deg, #0078d4, #0063b1);
+  color: #fff; padding: 16px 32px; border-radius: 8px;
+  font-weight: 600; font-size: 15px;
+  transition: all 0.25s;
+  box-shadow: 0 0 40px rgba(0,120,212,0.3);
+}
+.btn-edge:hover { transform: translateY(-2px); box-shadow: 0 10px 50px rgba(0,120,212,0.5); }
+
+.disclaimer {
+  font-size: 12px; color: var(--text3);
+  margin-top: 24px; font-family: var(--mono);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════════ */
+footer {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--border);
+  background: var(--bg2);
+  padding: 60px 5% 40px;
+}
+.footer-grid {
+  max-width: 1280px; margin: 0 auto;
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px; margin-bottom: 48px;
+}
+.footer-logo {
+  font-family: var(--display); font-size: 32px;
+  letter-spacing: 3px; color: #fff; margin-bottom: 14px;
+}
+.footer-logo span { color: var(--blue); }
+.footer-tagline { font-size: 13px; color: var(--text3); line-height: 1.6; max-width: 280px; }
+.footer-col h4 {
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--text3);
+  margin-bottom: 20px; font-family: var(--mono);
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-col ul li a { font-size: 13px; color: var(--text2); transition: color 0.2s; }
+.footer-col ul li a:hover { color: #fff; }
+
+.footer-bottom {
+  max-width: 1280px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 28px; border-top: 1px solid var(--border);
+  font-size: 12px; color: var(--text3); flex-wrap: wrap; gap: 10px;
+}
+.footer-bottom a { color: var(--blue); }
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLL REVEAL
+═══════════════════════════════════════════════════════════ */
+.reveal {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .steps-grid { grid-template-columns: repeat(3, 1fr); }
+  .bento { grid-template-columns: 1fr 1fr; }
+  .bento-cell.wide { grid-column: span 2; }
+  .patterns-intro { grid-template-columns: 1fr; gap: 40px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+}
+@media (max-width: 768px) {
+  .hero h1 { letter-spacing: 2px; }
+  .demo-body { grid-template-columns: 1fr; }
+  .stats-strip { grid-template-columns: repeat(2, 1fr); }
+  .steps-grid { grid-template-columns: 1fr 1fr; }
+  .patterns-grid { grid-template-columns: repeat(2, 1fr); }
+  .legal-grid { grid-template-columns: 1fr; }
+  .bento { grid-template-columns: 1fr; }
+  .bento-cell.wide { grid-column: span 1; }
+  .research-card { grid-template-columns: 1fr; }
+  .privacy-strip { grid-template-columns: 1fr; }
+  .changelog-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
 
-<header>
-    <h1>⚖️ Consent<span>Fair</span></h1>
-    <p class="tagline">An autonomous, locally-run browser extension that audits website cookie banners against GDPR and the India DPDP Act 2023.</p>
-    <a href="https://microsoftedge.microsoft.com/addons" class="btn">Get it for Microsoft Edge</a>
-</header>
+<!-- Background effects -->
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+<div class="bg-glow bg-glow-3"></div>
 
-<div class="container">
-    <div class="features">
-        <div class="card">
-            <h3>📊 Autonomous Scoring</h3>
-            <p>Instantly evaluates cookie consent banners and generates a 100-point compliance score based on strict regulatory heuristics.</p>
-        </div>
-        <div class="card">
-            <h3>🕵️ Detect Dark Patterns</h3>
-            <p>Identifies visual asymmetry, negative language framing, and calculates the click-path friction required to reject tracking.</p>
-        </div>
-        <div class="card">
-            <h3>📄 Forensic Audit Reports</h3>
-            <p>Generates professional offline HTML reports complete with a localized viewport screenshot of the exact banner state for your records.</p>
-        </div>
-        <div class="card">
-            <h3>🔒 100% Local & Private</h3>
-            <p>Built for academic research. Zero external servers, zero data tracking, and zero APIs. Everything happens securely in your browser.</p>
-        </div>
+<!-- ════════════════════════ NAV ════════════════════════ -->
+<nav>
+  <div class="nav-logo">⚖️ Consent<span>Fair</span></div>
+  <ul class="nav-links">
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#dark-patterns">Dark Patterns</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#legal">Legal Coverage</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="https://github.com/NIKITATAPALI/ConsentFair" target="_blank">GitHub</a></li>
+    <li><a href="#download" class="nav-cta">Get Extension</a></li>
+  </ul>
+</nav>
+
+<!-- ════════════════════════ HERO ════════════════════════ -->
+<div class="hero">
+  <div class="hero-eyebrow">
+    <span class="eyebrow-dot"></span>
+    v1.4.0 — Now detecting all 10 dark pattern categories
+  </div>
+
+  <h1>
+    CONSENT<br>
+    <span class="accent2">FAIR</span>
+  </h1>
+
+  <p class="hero-sub">
+    A <strong>free, open-source</strong> browser extension that forensically audits
+    every cookie consent banner you encounter — scoring it against
+    <strong>GDPR</strong> and <strong>India's DPDP Act 2023</strong> in real time.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#download" class="btn-primary">
+      🚀 Get the Extension — It's Free
+    </a>
+    <a href="https://github.com/NIKITATAPALI/ConsentFair" target="_blank" class="btn-secondary">
+      ⭐ View on GitHub
+    </a>
+  </div>
+
+  <!-- Live demo widget -->
+  <div class="hero-demo">
+    <div class="demo-bar">
+      <div class="demo-dot demo-dot-r"></div>
+      <div class="demo-dot demo-dot-y"></div>
+      <div class="demo-dot demo-dot-g"></div>
+      <div class="demo-url">https://linkedin.com — ConsentFair Audit Active</div>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--orange)">⚠️ ISSUES FOUND</span>
     </div>
+    <div class="demo-body">
+      <div class="demo-score-col">
+        <div class="demo-circle">
+          <span class="demo-score-num">48</span>
+          <span class="demo-score-lbl">/ 100</span>
+        </div>
+        <div class="demo-tier">⚠️ Partial</div>
+        <div class="demo-hostname">linkedin.com</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);text-align:center;">CAI: 1.00</div>
+      </div>
+      <div class="demo-right">
+        <div class="demo-bars-title">Score Breakdown</div>
+        <div class="demo-bar-row">
+          <span style="color:var(--text2)">Banner Presence</span>
+          <div class="demo-track"><div class="demo-fill" style="width:100%;background:#22c55e"></div></div>
+          <span class="demo-pts">20/20</span>
+        </div>
+        <div class="demo-bar-row">
+          <span style="color:var(--text2)">Accept Button</span>
+          <div class="demo-track"><div class="demo-fill" style="width:67%;background:#f59e0b"></div></div>
+          <span class="demo-pts">10/15</span>
+        </div>
+        <div class="demo-bar-row">
+          <span style="color:var(--text2)">Reject Button</span>
+          <div class="demo-track"><div class="demo-fill" style="width:40%;background:#ef4444"></div></div>
+          <span class="demo-pts">10/25</span>
+        </div>
+        <div class="demo-bar-row">
+          <span style="color:var(--text2)">Visual Symmetry</span>
+          <div class="demo-track"><div class="demo-fill" style="width:40%;background:#ef4444"></div></div>
+          <span class="demo-pts">10/25</span>
+        </div>
+        <div class="demo-bar-row">
+          <span style="color:var(--text2)">Language Clarity</span>
+          <div class="demo-track"><div class="demo-fill" style="width:100%;background:#22c55e"></div></div>
+          <span class="demo-pts">15/15</span>
+        </div>
+        <div class="demo-issues">
+          <div class="demo-issue demo-issue-crit">
+            <span style="color:var(--text2);font-size:11px;">[DP-FA] Forced Action — No reject button on initial banner</span>
+            <span class="demo-badge">Critical −25</span>
+          </div>
+          <div class="demo-issue demo-issue-high">
+            <span style="color:var(--text2);font-size:11px;">[DP-FH] False Hierarchy — Accept is visually dominant</span>
+            <span class="demo-badge">High −15</span>
+          </div>
+          <div class="demo-issue demo-issue-med">
+            <span style="color:var(--text2);font-size:11px;">[DP-VM] Visual Misdirection — Unequal button sizing</span>
+            <span class="demo-badge">Medium −10</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
+<!-- ════════════════════════ STATS ════════════════════════ -->
+<div class="stats-strip reveal">
+  <div class="stat-item">
+    <div class="stat-num">10</div>
+    <div class="stat-label">Dark Pattern Categories Detected</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">7+</div>
+    <div class="stat-label">Languages Supported</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">2</div>
+    <div class="stat-label">Regulatory Frameworks Mapped</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Local — Zero Data Sent</div>
+  </div>
+</div>
+
+<!-- ════════════════════════ HOW IT WORKS ════════════════════════ -->
+<section id="how-it-works">
+  <div class="reveal">
+    <div class="section-tag">// process</div>
+    <h2 class="section-title">HOW IT <span>WORKS</span></h2>
+    <p class="section-body">ConsentFair runs a fully autonomous forensic audit the moment you land on any website. No clicking required. No data leaves your device.</p>
+  </div>
+
+  <div class="steps-grid reveal">
+    <div class="step-card">
+      <span class="step-num">STEP 01</span>
+      <span class="step-icon">🧹</span>
+      <div class="step-title">Forensic Wipe</div>
+      <p class="step-desc">In bulk mode, all domain cookies and cache are cleared first to ensure a pristine, first-visit environment for accurate scanning.</p>
+      <span class="step-tag">browsingData API</span>
+    </div>
+    <div class="step-card">
+      <span class="step-num">STEP 02</span>
+      <span class="step-icon">🌐</span>
+      <div class="step-title">DOM Scan</div>
+      <p class="step-desc">The content script searches the entire DOM — including nested iframes — using 60+ CSS selectors and banner keyword matches across 7 languages.</p>
+      <span class="step-tag">content.js</span>
+    </div>
+    <div class="step-card">
+      <span class="step-num">STEP 03</span>
+      <span class="step-icon">↕️</span>
+      <div class="step-title">Scroll & Wait</div>
+      <p class="step-desc">The page is scrolled to the bottom and back to trigger lazy-loaded and scroll-dependent banners. Up to 15 retry cycles are attempted.</p>
+      <span class="step-tag">Auto-retry</span>
+    </div>
+    <div class="step-card">
+      <span class="step-num">STEP 04</span>
+      <span class="step-icon">🔬</span>
+      <div class="step-title">Pattern Analysis</div>
+      <p class="step-desc">All 10 dark pattern detectors fire: button styles, pre-ticked checkboxes, confusing language, hidden info, nagging visits, visual hierarchy and more.</p>
+      <span class="step-tag">rules.js</span>
+    </div>
+    <div class="step-card">
+      <span class="step-num">STEP 05</span>
+      <span class="step-icon">📊</span>
+      <div class="step-title">Score & Report</div>
+      <p class="step-desc">A 100-point compliance score, Consent Asymmetry Index (CAI), cookie inventory, and a downloadable forensic HTML report are generated instantly.</p>
+      <span class="step-tag">background.js</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ DARK PATTERNS ════════════════════════ -->
+<section id="dark-patterns" style="padding-top:0;">
+  <div class="patterns-intro reveal">
+    <div>
+      <div class="section-tag">// taxonomy</div>
+      <h2 class="section-title">ALL <span>10</span> DARK<br>PATTERNS</h2>
+      <p class="section-body">ConsentFair is the only free tool that actively detects all 10 categories defined by GDPR regulators. Each pattern carries a weighted point deduction.</p>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:16px;letter-spacing:1px;">SEVERITY SCALE</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:12px;height:12px;border-radius:50%;background:var(--red);flex-shrink:0;"></div>
+          <span style="font-size:13px;color:var(--text2);">Critical — −20 to −25 pts</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:12px;height:12px;border-radius:50%;background:var(--orange);flex-shrink:0;"></div>
+          <span style="font-size:13px;color:var(--text2);">High — −15 pts</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:12px;height:12px;border-radius:50%;background:#818cf8;flex-shrink:0;"></div>
+          <span style="font-size:13px;color:var(--text2);">Medium — −10 pts</span>
+        </div>
+      </div>
+      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:8px;">SCORE TIERS</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
+          <span style="color:#22c55e;">✅ 70–100 &nbsp;Compliant</span>
+          <span style="color:var(--orange);">⚠️ 40–69 &nbsp;Partially Compliant</span>
+          <span style="color:var(--red);">❌ 0–39 &nbsp;&nbsp;Non-Compliant</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="patterns-grid reveal">
+    <div class="pattern-card pc-crit">
+      <div class="pattern-code">DP-FA</div>
+      <div class="pattern-icon">🚫</div>
+      <div class="pattern-name">Forced Action</div>
+      <p class="pattern-desc">No explicit reject button provided. Users can only accept, with no way to decline without hunting for alternatives.</p>
+      <span class="pattern-weight">−25 pts · Critical</span>
+    </div>
+    <div class="pattern-card pc-crit">
+      <div class="pattern-code">DP-PT</div>
+      <div class="pattern-icon">☑️</div>
+      <div class="pattern-name">Pre-ticked Boxes</div>
+      <p class="pattern-desc">Non-essential cookie categories arrive pre-selected. Valid consent must be an active opt-in, never a passive default.</p>
+      <span class="pattern-weight">−20 pts · Critical</span>
+    </div>
+    <div class="pattern-card pc-high">
+      <div class="pattern-code">DP-RM</div>
+      <div class="pattern-icon">🪤</div>
+      <div class="pattern-name">Roach Motel</div>
+      <p class="pattern-desc">Accepting is one click; rejecting requires navigating into a settings panel. Effort asymmetry by design.</p>
+      <span class="pattern-weight">−15 pts · High</span>
+    </div>
+    <div class="pattern-card pc-high">
+      <div class="pattern-code">DP-PB</div>
+      <div class="pattern-icon">📦</div>
+      <div class="pattern-name">Purpose Bundling</div>
+      <p class="pattern-desc">All cookie purposes lumped into one binary choice. No granular control over analytics vs. marketing vs. essential.</p>
+      <span class="pattern-weight">−15 pts · High</span>
+    </div>
+    <div class="pattern-card pc-high">
+      <div class="pattern-code">DP-FH</div>
+      <div class="pattern-icon">👁️</div>
+      <div class="pattern-name">False Hierarchy</div>
+      <p class="pattern-desc">Accept button is bold, coloured, prominent. Reject button is grey, small, or outlined — steering users visually.</p>
+      <span class="pattern-weight">−15 pts · High</span>
+    </div>
+    <div class="pattern-card pc-med">
+      <div class="pattern-code">DP-VM</div>
+      <div class="pattern-icon">🎨</div>
+      <div class="pattern-name">Visual Misdirection</div>
+      <p class="pattern-desc">Unequal backgrounds, sizes, or font weights between Accept and Reject buttons that nudge users toward consent.</p>
+      <span class="pattern-weight">−10 pts · Medium</span>
+    </div>
+    <div class="pattern-card pc-med">
+      <div class="pattern-code">DP-UF</div>
+      <div class="pattern-icon">😨</div>
+      <div class="pattern-name">Urgency / Fear</div>
+      <p class="pattern-desc">Language like "less secure", "limited features", or "not recommended" attached to the reject path to create anxiety.</p>
+      <span class="pattern-weight">−10 pts · Medium</span>
+    </div>
+    <div class="pattern-card pc-med">
+      <div class="pattern-code">DP-HI</div>
+      <div class="pattern-icon">🔍</div>
+      <div class="pattern-name">Hidden Information</div>
+      <p class="pattern-desc">Key details buried in tiny text (&lt;10px), collapsed accordions, or a wall of text over 1200 characters long.</p>
+      <span class="pattern-weight">−10 pts · Medium</span>
+    </div>
+    <div class="pattern-card pc-med">
+      <div class="pattern-code">DP-CL</div>
+      <div class="pattern-icon">🌀</div>
+      <div class="pattern-name">Confusing Language</div>
+      <p class="pattern-desc">Double negatives like "uncheck to opt-out" or "untick if you do not want" make it impossible to understand what you're agreeing to.</p>
+      <span class="pattern-weight">−10 pts · Medium</span>
+    </div>
+    <div class="pattern-card pc-med">
+      <div class="pattern-code">DP-NG</div>
+      <div class="pattern-icon">🔔</div>
+      <div class="pattern-name">Nagging</div>
+      <p class="pattern-desc">The consent banner reappears on repeat visits even after a user has already made their choice — wearing users down.</p>
+      <span class="pattern-weight">−10 pts · Medium</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ FEATURES ════════════════════════ -->
+<section id="features" style="padding-top:0;">
+  <div class="reveal">
+    <div class="section-tag">// capabilities</div>
+    <h2 class="section-title">EVERYTHING <span>INSIDE</span></h2>
+    <p class="section-body">A complete forensic toolkit built for researchers, developers, compliance officers, and privacy-conscious users.</p>
+  </div>
+
+  <div class="bento reveal">
+    <div class="bento-cell wide">
+      <div class="bento-icon">🌍</div>
+      <div class="bento-title">Multi-Language Detection</div>
+      <p class="bento-desc">Banner and button keywords now cover 7 languages so the scanner works on French, German, Spanish, Portuguese, Italian, and Dutch sites — not just English.</p>
+      <div class="lang-list">
+        <span class="lang-pill">🇬🇧 English</span>
+        <span class="lang-pill">🇫🇷 French</span>
+        <span class="lang-pill">🇩🇪 German</span>
+        <span class="lang-pill">🇪🇸 Spanish</span>
+        <span class="lang-pill">🇵🇹 Portuguese</span>
+        <span class="lang-pill">🇮🇹 Italian</span>
+        <span class="lang-pill">🇳🇱 Dutch</span>
+      </div>
+    </div>
+
+    <div class="bento-cell">
+      <div class="bento-icon">🚨</div>
+      <div class="bento-title">Pre-Consent Cookie Detection</div>
+      <p class="bento-desc">Detects tracking cookies (Google Analytics, Meta Pixel, DoubleClick, TikTok and 30+ others) that fire <em>before</em> any user consent is given — a direct GDPR Art. 6 violation.</p>
+      <div class="bento-badge-row">
+        <span class="bento-badge">_ga · _fbp · IDE</span>
+        <span class="bento-badge">_ttp · MUID · NID</span>
+      </div>
+    </div>
+
+    <div class="bento-cell">
+      <div class="bento-icon">📊</div>
+      <div class="bento-title">Consent Asymmetry Index</div>
+      <p class="bento-desc">A quantitative score measuring how many times harder it is to reject consent vs. accept it.</p>
+      <div class="cai-formula">CAI = (clicks_reject − 1) / 1</div>
+      <p class="bento-desc" style="margin-top:10px;font-size:12px;">CAI 0.00 = perfect parity &nbsp;|&nbsp; CAI 1.00 = 2× more effort to reject</p>
+    </div>
+
+    <div class="bento-cell">
+      <div class="bento-icon">🍪</div>
+      <div class="bento-title">Cookie Inventory Tab</div>
+      <p class="bento-desc">Every cookie set by the site is listed with its name, domain, expiry, category (Essential / Analytics / Marketing / Functional), and Secure flag.</p>
+    </div>
+
+    <div class="bento-cell">
+      <div class="bento-icon">🕑</div>
+      <div class="bento-title">Audit History</div>
+      <p class="bento-desc">The last 30 audited sites are saved locally so you can track compliance trends, compare results, and revisit past findings without rescanning.</p>
+    </div>
+
+    <div class="bento-cell">
+      <div class="bento-icon">🔄</div>
+      <div class="bento-title">One-Click Re-Scan</div>
+      <p class="bento-desc">Hit the re-scan button to instantly re-audit the current page without refreshing. Essential for developers testing their own banners.</p>
+    </div>
+
+    <div class="bento-cell">
+      <div class="bento-icon">📄</div>
+      <div class="bento-title">Forensic HTML Reports</div>
+      <p class="bento-desc">Download a printable, professional audit report with score, issue citations, button inventory, cookie inventory table, and a viewport screenshot — ready for legal or academic use.</p>
+      <div class="bento-badge-row">
+        <span class="bento-badge">GDPR Articles cited</span>
+        <span class="bento-badge">DPDP Sections cited</span>
+        <span class="bento-badge">Print to PDF</span>
+      </div>
+    </div>
+
+    <div class="bento-cell wide">
+      <div class="bento-icon">🔬</div>
+      <div class="bento-title">Batch / Bulk Audit Dashboard</div>
+      <p class="bento-desc">Paste up to hundreds of URLs and run automated batch audits. Each site gets a forensic wipe, isolated fresh-session navigation, and a full compliance score. Results populate a live analytics chart and are exportable as a research CSV including Base64-encoded screenshots.</p>
+      <div class="bento-badge-row">
+        <span class="bento-badge">Live distribution chart</span>
+        <span class="bento-badge">CSV export with screenshots</span>
+        <span class="bento-badge">Configurable 10s–60s timeout</span>
+        <span class="bento-badge">Auto cookie wipe per site</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ LEGAL COVERAGE ════════════════════════ -->
+<section id="legal" style="padding-top:0;">
+  <div class="reveal">
+    <div class="section-tag">// regulatory mapping</div>
+    <h2 class="section-title">LEGAL <span>COVERAGE</span></h2>
+    <p class="section-body">Every detected dark pattern is mapped to the specific article or section of the relevant regulation — giving you citation-ready evidence.</p>
+  </div>
+
+  <div class="legal-grid reveal">
+    <div class="legal-card legal-gdpr">
+      <div class="legal-flag">🇪🇺</div>
+      <div class="legal-name">GDPR</div>
+      <div class="legal-full">General Data Protection Regulation · EU 2016/679</div>
+      <p class="legal-desc">The world's most comprehensive data protection law, in force since May 2018. Applies to any organisation processing EU residents' personal data, regardless of where the organisation is located.</p>
+      <div class="legal-articles">
+        <div class="legal-article">
+          <span class="article-ref">Art. 4(11)</span>
+          <span class="article-desc">Defines valid consent: freely given, specific, informed and unambiguous indication of agreement.</span>
+        </div>
+        <div class="legal-article">
+          <span class="article-ref">Art. 7(3)</span>
+          <span class="article-desc">Withdrawal of consent must be as easy as giving it. Detected by CAI score and DP-RM / DP-FA.</span>
+        </div>
+        <div class="legal-article">
+          <span class="article-ref">Art. 13 & 14</span>
+          <span class="article-desc">Transparency obligations. Hidden information (DP-HI) violates this directly.</span>
+        </div>
+        <div class="legal-article">
+          <span class="article-ref">Recital 32</span>
+          <span class="article-desc">Pre-ticked boxes (DP-PT) do not constitute valid consent under GDPR.</span>
+        </div>
+        <div class="legal-article">
+          <span class="article-ref">Art. 6(1)(a)</span>
+          <span class="article-desc">Lawful basis for processing. Pre-consent cookie firing (DP-PC) is a direct violation.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="legal-card legal-dpdp">
+      <div class="legal-flag">🇮🇳</div>
+      <div class="legal-name">DPDP</div>
+      <div class="legal-full">Digital Personal Data Protection Act 2023 · India</div>
+      <p class="legal-desc">India's landmark data protection legislation passed in August 2023. Applies to processing of digital personal data within India and to processing outside India if related to offering goods/services in India.</p>
+      <div class="legal-articles">
+        <div class="legal-article">
+          <span class="article-ref">Section 5</span>
+          <span class="article-desc">Notice requirement. The data fiduciary must give clear, standalone notice — detected via banner presence and DP-HI.</span>
+        </div>
+        <div class="legal-article">
+          <span class="article-ref">Section 6</span>
+          <span class="article-desc">Consent must be free, specific, informed and unambiguous. Covers DP-FA, DP-PT, DP-VM, DP-CL, DP-NG, DP-FH.</span>
+        </div>
+        <div class="legal-article">
+          <span class="article-ref">Section 7</span>
+          <span class="article-desc">Legitimate uses of data. Information about these must not be hidden (DP-HI) from the data principal.</span>
+        </div>
+        <div class="legal-article">
+          <span class="article-ref">Section 9</span>
+          <span class="article-desc">Rights of data principal — right to withdraw consent easily. Maps to DP-FA and DP-RM detectors.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ WHAT'S NEW ════════════════════════ -->
+<div class="changelog reveal" id="changelog">
+  <div class="changelog-inner">
+    <div class="section-tag">// changelog</div>
+    <h2 class="section-title">WHAT'S <span>NEW</span></h2>
+
+    <div class="changelog-grid">
+      <div class="changelog-versions">
+        <button class="version-btn active" onclick="showVersion('v140', this)">
+          v1.4.0 — Latest <span class="version-badge">NEW</span>
+        </button>
+        <button class="version-btn" onclick="showVersion('v130', this)">
+          v1.3.0 <span class="version-badge old">Previous</span>
+        </button>
+        <button class="version-btn" onclick="showVersion('v120', this)">
+          v1.2.0 <span class="version-badge old">Archive</span>
+        </button>
+      </div>
+
+      <div>
+        <div id="ver-v140" class="changelog-items">
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>All 10 dark patterns now active</strong> — DP-HI, DP-CL, DP-NG, and DP-FH were previously defined but never triggered. All are now fully implemented.</div></div>
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>Pre-Consent Cookie Firing (DP-PC)</strong> — Detects tracking scripts firing before any user consent, cross-referencing 30+ known tracker cookie prefixes.</div></div>
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>Multi-language support</strong> — Banner, Accept, Reject, and Manage keywords now cover 7 languages: EN, FR, DE, ES, PT, IT, NL.</div></div>
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>Cookie Inventory tab</strong> — Lists all site cookies with name, category, domain, expiry, and Secure/HttpOnly flags.</div></div>
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>Audit History tab</strong> — Stores last 30 audits locally with score, tier, issue count, and timestamp.</div></div>
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>🔄 Re-scan button</strong> — Re-audits the active page without a page reload.</div></div>
+          <div class="change-item"><span class="change-type ct-fix">FIX</span><div class="change-text"><strong>Bulk scan no longer waits for full timeout</strong> — Scans now complete as soon as real data arrives, resolving the Promise immediately.</div></div>
+          <div class="change-item"><span class="change-type ct-fix">FIX</span><div class="change-text"><strong>Dual onMessage listener merged</strong> — Eliminated Chrome MV3 handler conflict that caused silent message drops.</div></div>
+          <div class="change-item"><span class="change-type ct-fix">FIX</span><div class="change-text"><strong>CAI formula corrected</strong> — Now computes a genuine asymmetry ratio instead of a divide-by-1 no-op.</div></div>
+          <div class="change-item"><span class="change-type ct-imp">IMP</span><div class="change-text"><strong>CSV export now includes Base64 screenshots</strong> — Matching the advertised "CSV with Base64 img" feature in the README.</div></div>
+        </div>
+        <div id="ver-v130" class="changelog-items" style="display:none">
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>Forensic session wipe</strong> — Bulk audit mode now clears cookies and cache before each scan for clean first-visit conditions.</div></div>
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>Screenshot capture</strong> — Viewport screenshot taken at banner detection moment, embedded in reports.</div></div>
+          <div class="change-item"><span class="change-type ct-imp">IMP</span><div class="change-text"><strong>Cross-frame scanning</strong> — Banner detection now recurses into accessible iframes for CMP platforms that render in frames.</div></div>
+          <div class="change-item"><span class="change-type ct-fix">FIX</span><div class="change-text"><strong>CAI type coercion bug</strong> — parseFloat() check prevents string vs. number comparison failures.</div></div>
+        </div>
+        <div id="ver-v120" class="changelog-items" style="display:none">
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>Researcher Dashboard</strong> — Full-page bulk audit tool with live analytics chart and CSV export.</div></div>
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>CAI Score introduced</strong> — First implementation of Consent Asymmetry Index metric.</div></div>
+          <div class="change-item"><span class="change-type ct-imp">IMP</span><div class="change-text"><strong>6 dark pattern detectors live</strong> — DP-FA, DP-VM, DP-RM, DP-PT, DP-UF, DP-PB active in scoring engine.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════ PRIVACY ════════════════════════ -->
+<section style="padding-top: 80px; padding-bottom: 40px;">
+  <div class="privacy-strip reveal">
+    <div class="priv-item">
+      <div class="priv-icon">🏠</div>
+      <div class="priv-title">100% Local Processing</div>
+      <p class="priv-desc">Every scan, score, and report is computed entirely inside your browser. No data is sent to any server, API, or third party — ever.</p>
+    </div>
+    <div class="priv-item">
+      <div class="priv-icon">🔒</div>
+      <div class="priv-title">Zero Data Collection</div>
+      <p class="priv-desc">ConsentFair does not collect, store, or sell any personal data. We have no analytics, no user accounts, and no telemetry.</p>
+    </div>
+    <div class="priv-item">
+      <div class="priv-icon">📖</div>
+      <div class="priv-title">Fully Open Source</div>
+      <p class="priv-desc">Every line of code is publicly auditable on GitHub under the MIT License. Fork it, study it, improve it — it belongs to everyone.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ RESEARCH ════════════════════════ -->
+<section id="research" style="padding-top: 40px;">
+  <div class="reveal">
+    <div class="section-tag">// academic research</div>
+    <h2 class="section-title">BUILT FOR <span>SCIENCE</span></h2>
+    <p class="section-body">ConsentFair began as rigorous academic research at Amity University, grounded in peer-reviewed literature on dark patterns and consent manipulation.</p>
+  </div>
+
+  <div class="research-card reveal">
+    <div>
+      <div class="research-badge">📚 Academic Project</div>
+      <h3 style="font-size:28px;font-family:var(--display);letter-spacing:2px;color:#fff;margin-bottom:16px;">M.Sc. CYBER FORENSIC<br>& CYBER SECURITY</h3>
+      <p style="font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:20px;">This tool is the practical implementation of a 6-page IEEE conference paper on forensic detection of dark patterns in cookie consent interfaces. The research maps real-world deceptive UX practices to specific GDPR and DPDP violations using a reproducible, quantitative scoring methodology.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="https://github.com/NIKITATAPALI/ConsentFair" target="_blank" class="btn-ghost">📄 Research Paper (LaTeX)</a>
+        <a href="https://github.com/NIKITATAPALI/ConsentFair" target="_blank" class="btn-ghost">📚 BibTeX References</a>
+      </div>
+    </div>
+    <div class="research-meta">
+      <div class="meta-row">
+        <span class="meta-key">Author</span>
+        <span class="meta-val" style="color:#fff;font-weight:600;">Nikita Tapali</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-key">Programme</span>
+        <span class="meta-val">M.Sc. Cyber Forensic & Cyber Security</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-key">Institution</span>
+        <span class="meta-val">Amity University, Uttar Pradesh</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-key">Tool Version</span>
+        <span class="meta-val">ConsentFair v1.4.0</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-key">License</span>
+        <span class="meta-val">MIT — Free for academic & commercial use</span>
+      </div>
+      <code class="enroll-no">A059169824043</code>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ CTA ════════════════════════ -->
+<div class="cta-section reveal" id="download">
+  <div class="cta-glow"></div>
+  <div class="section-tag">// install now</div>
+  <h2 class="section-title">
+    START AUDITING<br><span>IN 30 SECONDS</span>
+  </h2>
+  <p class="section-body">
+    Install ConsentFair, pin it to your toolbar, and browse the web. Every site you visit gets automatically audited and scored. No configuration required.
+  </p>
+  <div class="cta-buttons">
+    <a href="https://microsoftedge.microsoft.com/addons" target="_blank" class="btn-edge">
+      🌐 Add to Microsoft Edge — Free
+    </a>
+    <a href="https://github.com/NIKITATAPALI/ConsentFair" target="_blank" class="btn-secondary">
+      ⚙️ Load Unpacked (Chrome / Dev)
+    </a>
+  </div>
+  <p class="disclaimer">// Free forever · Open source · No account required · No data collected</p>
+</div>
+
+<!-- ════════════════════════ FOOTER ════════════════════════ -->
 <footer>
-    <p>Developed for academic research by Nikita Tapali at Amity University.</p>
-    <p>
-        <a href="https://github.com/NIKITATAPALI/ConsentFair">View Source on GitHub</a> | 
-        <a href="https://github.com/NIKITATAPALI/ConsentFair/blob/main/PRIVACY_POLICY.md">Privacy Policy</a>
-    </p>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">⚖️ Consent<span>Fair</span></div>
+      <p class="footer-tagline">A forensic cookie consent auditor built for researchers, developers, and privacy advocates. Free, open-source, local-first.</p>
+      <div style="margin-top:20px;display:flex;gap:12px;">
+        <a href="https://github.com/NIKITATAPALI/ConsentFair" target="_blank" style="font-size:12px;color:var(--text3);transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">GitHub →</a>
+        <a href="https://github.com/NIKITATAPALI/ConsentFair/blob/main/PRIVACY_POLICY.md" style="font-size:12px;color:var(--text3);transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">Privacy Policy →</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Extension</h4>
+      <ul>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#features">All Features</a></li>
+        <li><a href="#changelog">Changelog</a></li>
+        <li><a href="#download">Install Now</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Regulations</h4>
+      <ul>
+        <li><a href="#legal">GDPR Coverage</a></li>
+        <li><a href="#legal">DPDP Act 2023</a></li>
+        <li><a href="#dark-patterns">Dark Patterns</a></li>
+        <li><a href="#dark-patterns">CAI Score</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Research</h4>
+      <ul>
+        <li><a href="#research">About the Project</a></li>
+        <li><a href="https://github.com/NIKITATAPALI/ConsentFair" target="_blank">Source Code</a></li>
+        <li><a href="https://github.com/NIKITATAPALI/ConsentFair" target="_blank">IEEE Paper (LaTeX)</a></li>
+        <li><a href="https://github.com/NIKITATAPALI/ConsentFair/blob/main/PRIVACY_POLICY.md">Privacy Policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Nikita Tapali — Amity University, Uttar Pradesh. Released under the <a href="https://github.com/NIKITATAPALI/ConsentFair/blob/main/LICENSE" target="_blank">MIT License</a>.</span>
+    <span style="font-family:var(--mono);font-size:11px;">ConsentFair v1.4.0 · GDPR + DPDP Act 2023</span>
+  </div>
 </footer>
 
+<script>
+// ── Scroll reveal ───────────────────────────────────────────────────────
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── Stagger child reveals ──────────────────────────────────────────────
+document.querySelectorAll('.steps-grid, .patterns-grid, .bento, .legal-grid').forEach(grid => {
+  const children = grid.children;
+  Array.from(children).forEach((child, i) => {
+    child.style.transitionDelay = `${i * 60}ms`;
+  });
+});
+
+// ── Changelog version switcher ─────────────────────────────────────────
+function showVersion(ver, btn) {
+  document.querySelectorAll('.changelog-items').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.version-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('ver-' + ver).style.display = 'flex';
+  btn.classList.add('active');
+}
+
+// ── Animated score counter ─────────────────────────────────────────────
+function animateCounter(el, target, duration) {
+  let start = 0;
+  const step = target / (duration / 16);
+  const timer = setInterval(() => {
+    start = Math.min(start + step, target);
+    el.textContent = Math.floor(start);
+    if (start >= target) clearInterval(timer);
+  }, 16);
+}
+
+const statsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.stat-num').forEach(el => {
+        const val = parseInt(el.textContent);
+        if (!isNaN(val)) animateCounter(el, val, 1200);
+      });
+      statsObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+const strip = document.querySelector('.stats-strip');
+if (strip) statsObserver.observe(strip);
+
+// ── Smooth nav active state ────────────────────────────────────────────
+const sections = document.querySelectorAll('section[id], div[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+const navObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => {
+        a.style.color = '';
+        if (a.getAttribute('href') === '#' + entry.target.id) {
+          a.style.color = '#fff';
+        }
+      });
+    }
+  });
+}, { threshold: 0.4 });
+
+sections.forEach(s => navObserver.observe(s));
+</script>
 </body>
 </html>
