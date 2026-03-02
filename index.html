@@ -736,8 +736,88 @@ footer {
   .nav-links { display: none; }
   .footer-grid { grid-template-columns: 1fr; }
 }
+/* ═══════════════════════════════════════════════════════════
+   PRO TAG on bento cells
+═══════════════════════════════════════════════════════════ */
+.bento-pro-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(252,211,77,0.1));
+  color: #f59e0b; font-size: 9px; font-weight: 700;
+  padding: 2px 6px; border-radius: 4px;
+  border: 1px solid rgba(245,158,11,0.35);
+  letter-spacing: 0.5px; vertical-align: middle;
+  font-family: var(--mono); margin-left: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PRICING SECTION
+═══════════════════════════════════════════════════════════ */
+.pricing-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 24px; margin-top: 60px; max-width: 860px; margin-left: auto; margin-right: auto;
+}
+.pricing-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 36px 32px;
+  position: relative; overflow: hidden;
+}
+.pricing-card.featured {
+  border-color: rgba(245,158,11,0.5);
+  background: linear-gradient(160deg, #131929 0%, #1a1e2e 100%);
+  box-shadow: 0 0 60px rgba(245,158,11,0.08);
+}
+.pricing-card.featured::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, #f59e0b, #fcd34d, #f59e0b);
+}
+.pricing-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--text3); margin-bottom: 16px;
+}
+.pricing-label.pro-label { color: #f59e0b; }
+.pricing-price {
+  font-family: var(--display); font-size: 52px; letter-spacing: -1px;
+  color: #fff; line-height: 1; margin-bottom: 6px;
+}
+.pricing-price sup { font-size: 24px; vertical-align: top; margin-top: 10px; font-family: var(--body); }
+.pricing-period { font-size: 13px; color: var(--text3); margin-bottom: 28px; }
+.pricing-period em { color: var(--green); font-style: normal; font-weight: 600; }
+.pricing-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+.pricing-features li { font-size: 13px; color: var(--text2); display: flex; gap: 10px; align-items: flex-start; }
+.pricing-features li::before { content: "✓"; color: var(--green); font-weight: 700; flex-shrink: 0; }
+.pricing-features li.locked::before { content: "✗"; color: var(--text3); }
+.pricing-features li.locked { color: var(--text3); }
+.pricing-btn {
+  display: block; width: 100%; text-align: center;
+  padding: 13px 20px; border-radius: 8px;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.25s; text-decoration: none;
+}
+.pricing-btn-free {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2);
+}
+.pricing-btn-free:hover { border-color: var(--blue); color: #fff; }
+.pricing-btn-pro {
+  background: linear-gradient(135deg, #f59e0b, #fcd34d);
+  color: #0b0e1a; border: none;
+  box-shadow: 0 0 30px rgba(245,158,11,0.25);
+}
+.pricing-btn-pro:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(245,158,11,0.4);
+}
+.pricing-note {
+  text-align: center; font-size: 11px; color: var(--text3);
+  margin-top: 16px; font-family: var(--mono);
+}
+@media (max-width: 768px) {
+  .pricing-grid { grid-template-columns: 1fr; }
+}
+
 </style>
-</head>
 <body>
 
 <!-- Background effects -->
@@ -755,6 +835,7 @@ footer {
     <li><a href="#features">Features</a></li>
     <li><a href="#legal">Legal Coverage</a></li>
     <li><a href="#research">Research</a></li>
+    <li><a href="#pricing">Pricing</a></li>
     <li><a href="https://github.com/NIKITATAPALI/ConsentFair" target="_blank">GitHub</a></li>
     <li><a href="#download" class="nav-cta">Get Extension</a></li>
   </ul>
@@ -764,7 +845,7 @@ footer {
 <div class="hero">
   <div class="hero-eyebrow">
     <span class="eyebrow-dot"></span>
-    v1.4.0 — Now detecting all 10 dark pattern categories
+    v1.5.0 — Score Cards, DPA Reports, Certificates & Pro Unlock
   </div>
 
   <h1>
@@ -1110,6 +1191,51 @@ footer {
         <span class="bento-badge">Auto cookie wipe per site</span>
       </div>
     </div>
+
+    <div class="bento-cell">
+      <div class="bento-icon">🎴</div>
+      <div class="bento-title">Shareable Score Card <span class="bento-pro-tag">PRO</span></div>
+      <p class="bento-desc">Generate a downloadable 600×320px PNG score card after every audit — showing the site score, tier badge, top 3 violations colour-coded by severity, breakdown bars, and ConsentFair branding. Ready to share on Twitter, LinkedIn, or attach to reports.</p>
+      <div class="bento-badge-row">
+        <span class="bento-badge">PNG download</span>
+        <span class="bento-badge">Canvas-rendered locally</span>
+        <span class="bento-badge">No upload needed</span>
+      </div>
+    </div>
+
+    <div class="bento-cell">
+      <div class="bento-icon">🏛️</div>
+      <div class="bento-title">Report to Data Authority <span class="bento-pro-tag">PRO</span></div>
+      <p class="bento-desc">One click opens the correct Data Protection Authority complaint page for the site's jurisdiction — MEITY for India, ICO for UK, CNIL for France, BfDI for Germany, and 8 more. Pro users also get a pre-filled complaint letter copied to clipboard, ready to paste.</p>
+      <div class="bento-badge-row">
+        <span class="bento-badge">12 DPA authorities mapped</span>
+        <span class="bento-badge">Auto TLD detection</span>
+        <span class="bento-badge">Clipboard complaint (Pro)</span>
+      </div>
+    </div>
+
+    <div class="bento-cell">
+      <div class="bento-icon">🏆</div>
+      <div class="bento-title">Compliance Certificate <span class="bento-pro-tag">PRO</span></div>
+      <p class="bento-desc">Sites scoring 70+ unlock a downloadable SVG certificate of compliance — professionally designed with corner ornaments, gold title, score ring, COMPLIANT badge, and audit metadata. Infinitely scalable for printing, embedding in reports, or displaying on websites.</p>
+      <div class="bento-badge-row">
+        <span class="bento-badge">SVG — infinite resolution</span>
+        <span class="bento-badge">Print ready</span>
+        <span class="bento-badge">Compliant sites only</span>
+      </div>
+    </div>
+
+    <div class="bento-cell">
+      <div class="bento-icon">📅</div>
+      <div class="bento-title">Weekly Privacy Digest</div>
+      <p class="bento-desc">Every Monday, ConsentFair sends a Chrome notification summarising your past 7 days — total sites scanned, average score, how many were compliant vs. non-compliant, your best and worst site of the week. No server. Computed entirely from your local audit history.</p>
+      <div class="bento-badge-row">
+        <span class="bento-badge">Every Monday</span>
+        <span class="bento-badge">100% local</span>
+        <span class="bento-badge">Zero data sent</span>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -1186,11 +1312,14 @@ footer {
 
     <div class="changelog-grid">
       <div class="changelog-versions">
-        <button class="version-btn active" onclick="showVersion('v140', this)">
-          v1.4.0 — Latest <span class="version-badge">NEW</span>
+        <button class="version-btn active" onclick="showVersion('v150', this)">
+          v1.5.0 — Latest <span class="version-badge">NEW</span>
+        </button>
+        <button class="version-btn" onclick="showVersion('v140', this)">
+          v1.4.0 <span class="version-badge old">Previous</span>
         </button>
         <button class="version-btn" onclick="showVersion('v130', this)">
-          v1.3.0 <span class="version-badge old">Previous</span>
+          v1.3.0 <span class="version-badge old">Archive</span>
         </button>
         <button class="version-btn" onclick="showVersion('v120', this)">
           v1.2.0 <span class="version-badge old">Archive</span>
@@ -1198,7 +1327,17 @@ footer {
       </div>
 
       <div>
-        <div id="ver-v140" class="changelog-items">
+        <div id="ver-v150" class="changelog-items">
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>Freemium Pro system</strong> — License key gate unlocks Score Card, Audit Reports, DPA Complaint Copy, Certificate, Cookie Inventory and History. Key validation is fully offline using a djb2 checksum — no server needed.</div></div>
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>🎴 Shareable Score Card</strong> — Canvas-rendered 600×320px PNG showing score circle, tier badge, top 3 issues, mini breakdown bars, and branded footer. Downloads instantly.</div></div>
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>🏛️ Report to Data Authority</strong> — Auto-detects DPA by TLD (MEITY 🇮🇳, ICO 🇬🇧, CNIL 🇫🇷, BfDI 🇩🇪, DPC 🇮🇪 + 7 more). Opens complaint page. Pro copies pre-filled complaint letter to clipboard.</div></div>
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>🏆 Compliance Certificate</strong> — Compliant sites (70+) can download a professional 800×560px SVG certificate with gold title, score ring, corner ornaments, and full audit metadata.</div></div>
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>📅 Weekly Privacy Digest</strong> — Chrome notification every Monday summarising your last 7 days: sites scanned, average score, compliance breakdown, best and worst site of the week. 100% local.</div></div>
+          <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>Pro Upgrade Modal</strong> — In-popup bottom sheet with feature list, Gumroad buy link, and license key input field with auto-formatting and instant validation feedback.</div></div>
+          <div class="change-item"><span class="change-type ct-fix">FIX</span><div class="change-text"><strong>Button actions not firing</strong> — Root cause was module-scope bug: currentResult declared inside DOMContentLoaded closure, unreachable by renderResult(). Moved to module-level. All 4 action buttons now work correctly.</div></div>
+          <div class="change-item"><span class="change-type ct-imp">IMP</span><div class="change-text"><strong>DPA always free to open</strong> — Opening the DPA complaint page is free for all users. Pro adds clipboard copy of the pre-formatted complaint letter on top.</div></div>
+        </div>
+        <div id="ver-v140" class="changelog-items" style="display:none">
           <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>All 10 dark patterns now active</strong> — DP-HI, DP-CL, DP-NG, and DP-FH were previously defined but never triggered. All are now fully implemented.</div></div>
           <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>Pre-Consent Cookie Firing (DP-PC)</strong> — Detects tracking scripts firing before any user consent, cross-referencing 30+ known tracker cookie prefixes.</div></div>
           <div class="change-item"><span class="change-type ct-new">NEW</span><div class="change-text"><strong>Multi-language support</strong> — Banner, Accept, Reject, and Manage keywords now cover 7 languages: EN, FR, DE, ES, PT, IT, NL.</div></div>
@@ -1291,6 +1430,64 @@ footer {
   </div>
 </section>
 
+<!-- ════════════════════════ PRICING ════════════════════════ -->
+<section id="pricing" style="padding-top: 80px; padding-bottom: 0;">
+  <div class="reveal">
+    <div class="section-tag">// pricing</div>
+    <h2 class="section-title">FREE TO USE. <span>PRO TO SCALE.</span></h2>
+    <p class="section-body">The core audit — score, dark pattern detection, DPA report — is free forever. Pro unlocks the tools that make your findings shareable, reportable, and publishable.</p>
+  </div>
+
+  <div class="pricing-grid reveal">
+
+    <!-- Free tier -->
+    <div class="pricing-card">
+      <div class="pricing-label">// Free Forever</div>
+      <div class="pricing-price">₹<span>0</span></div>
+      <div class="pricing-period">No account required · Open source</div>
+      <ul class="pricing-features">
+        <li>100-point compliance score</li>
+        <li>All 10 dark pattern detectors</li>
+        <li>Consent Asymmetry Index (CAI)</li>
+        <li>Pre-consent cookie detection</li>
+        <li>GDPR + DPDP violation mapping</li>
+        <li>One-click DPA page opener</li>
+        <li>Multi-language banner detection</li>
+        <li>Batch / bulk audit dashboard</li>
+        <li class="locked">Full HTML audit report</li>
+        <li class="locked">Shareable score card PNG</li>
+        <li class="locked">DPA complaint clipboard copy</li>
+        <li class="locked">Compliance certificate SVG</li>
+        <li class="locked">Cookie inventory tab</li>
+        <li class="locked">Audit history (30 sites)</li>
+      </ul>
+      <a href="#download" class="pricing-btn pricing-btn-free">Get Free Extension</a>
+    </div>
+
+    <!-- Pro tier -->
+    <div class="pricing-card featured">
+      <div class="pricing-label pro-label">// Pro — Lifetime</div>
+      <div class="pricing-price">₹<span>499</span></div>
+      <div class="pricing-period"><em>One-time payment</em> · Instant key delivery · No subscription</div>
+      <ul class="pricing-features">
+        <li>Everything in Free</li>
+        <li>Full HTML audit report (print to PDF)</li>
+        <li>Shareable score card PNG</li>
+        <li>DPA complaint letter (clipboard copy)</li>
+        <li>Compliance certificate SVG</li>
+        <li>Cookie inventory tab — classified by type</li>
+        <li>Audit history — last 30 sites, locally stored</li>
+        <li>All future Pro features included</li>
+      </ul>
+      <a href="https://consentfair.gumroad.com/l/pro" target="_blank" class="pricing-btn pricing-btn-pro">
+        ⚡ Get ConsentFair Pro — ₹499
+      </a>
+      <p class="pricing-note">Enter your key directly in the extension popup · Works on Chrome &amp; Edge</p>
+    </div>
+
+  </div>
+</section>
+
 <!-- ════════════════════════ CTA ════════════════════════ -->
 <div class="cta-section reveal" id="download">
   <div class="cta-glow"></div>
@@ -1305,8 +1502,11 @@ footer {
     <a href="https://microsoftedge.microsoft.com/addons" target="_blank" class="btn-edge">
       🌐 Add to Microsoft Edge — Free
     </a>
+    <a href="https://chrome.google.com/webstore" target="_blank" class="btn-edge" style="background:linear-gradient(135deg,#34a853,#1e7e34);box-shadow:0 0 40px rgba(52,168,83,0.3);">
+      🟢 Add to Chrome — Free
+    </a>
     <a href="https://github.com/NIKITATAPALI/ConsentFair" target="_blank" class="btn-secondary">
-      ⚙️ Load Unpacked (Chrome / Dev)
+      ⚙️ Load Unpacked (Dev)
     </a>
   </div>
   <p class="disclaimer">// Free forever · Open source · No account required · No data collected</p>
