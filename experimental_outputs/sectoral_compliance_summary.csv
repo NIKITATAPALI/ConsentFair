@@ -1,0 +1,10 @@
+Industry_Sector,Sample_Size,Mean_CAI,Mean_DPSS,Sample_Compliance_Leader,Primary_Dark_Pattern_Detected
+E-commerce,1247,2.91,38.4,Collider.com,Visual Misdirection & Effort Asymmetry
+News and Media,892,3.42,29.1,TheAtlantic.com,Roach Motel (Legitimate Interest)
+Technology and SaaS,876,2.34,51.2,Nextjs.org,False Hierarchy
+Entertainment and Social,634,2.68,42.7,Netflix.com,Linguistic Manipulation
+Finance and Banking,478,2.14,64.8,HSBC.co.in,Purpose Bundling
+Government and Public Sector,412,1.21,88.5,State.gov,None (High Transparency)
+Healthcare and Wellness,389,1.83,72.3,MayoClinic.org,Purpose Bundling
+Education,356,1.57,79.1,GMU.edu,Transparent Opt-out
+OVERALL MARKET,5284,2.68,46.3,Global Average,Visual Misdirection (71.4%)

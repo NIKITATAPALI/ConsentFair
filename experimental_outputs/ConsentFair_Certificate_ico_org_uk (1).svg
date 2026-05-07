@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="560" viewBox="0 0 800 560">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#080b14"/>
+      <stop offset="100%" stop-color="#0f1421"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#f59e0b"/>
+      <stop offset="50%"  stop-color="#fcd34d"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="border-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#3d7ef5"/>
+      <stop offset="50%"  stop-color="#27ae60"/>
+      <stop offset="100%" stop-color="#3d7ef5"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="560" fill="url(#bg)" rx="12"/>
+
+  <!-- Subtle dot grid -->
+  <pattern id="dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+    <circle cx="1" cy="1" r="1" fill="rgba(74,144,217,0.07)"/>
+  </pattern>
+  <rect width="800" height="560" fill="url(#dots)" rx="12"/>
+
+  <!-- Outer decorative border -->
+  <rect x="10" y="10" width="780" height="540" fill="none"
+        stroke="url(#border-grad)" stroke-width="2" rx="10" opacity="0.5"/>
+  <rect x="18" y="18" width="764" height="524" fill="none"
+        stroke="#1c2540" stroke-width="1" rx="8"/>
+
+  <!-- Corner ornaments -->
+  <path d="M10 55 L10 10 L55 10"  fill="none" stroke="url(#gold)" stroke-width="2.5"/>
+  <path d="M745 10 L790 10 L790 55"  fill="none" stroke="url(#gold)" stroke-width="2.5"/>
+  <path d="M10 505 L10 550 L55 550"  fill="none" stroke="url(#gold)" stroke-width="2.5"/>
+  <path d="M745 550 L790 550 L790 505"  fill="none" stroke="url(#gold)" stroke-width="2.5"/>
+
+  <!-- Inner decorative lines -->
+  <line x1="80" y1="108" x2="720" y2="108" stroke="#1c2540" stroke-width="1"/>
+  <line x1="80" y1="108" x2="720" y2="108" stroke="url(#border-grad)" stroke-width="1" opacity="0.35"/>
+  <line x1="80" y1="472" x2="720" y2="472" stroke="#1c2540" stroke-width="1"/>
+
+  <!-- Header -->
+  <text x="400" y="50" font-family="Arial, sans-serif" font-size="13" font-weight="bold"
+        fill="#4a90d9" text-anchor="middle" letter-spacing="4">⚖️  C O N S E N T F A I R</text>
+  <text x="400" y="72" font-family="Arial, sans-serif" font-size="10"
+        fill="#3a4060" text-anchor="middle" letter-spacing="3">FORENSIC COOKIE CONSENT AUDIT FRAMEWORK</text>
+  <text x="400" y="92" font-family="Arial, sans-serif" font-size="10"
+        fill="#252e4a" text-anchor="middle" letter-spacing="2">GDPR (EU 2016/679)  ·  INDIA DPDP ACT 2023</text>
+
+  <!-- Certificate title -->
+  <text x="400" y="155" font-family="Georgia, 'Times New Roman', serif" font-size="30"
+        font-weight="bold" fill="url(#gold)" text-anchor="middle"
+        letter-spacing="4" filter="url(#glow)">CERTIFICATE OF COMPLIANCE</text>
+
+  <text x="400" y="192" font-family="Arial, sans-serif" font-size="13"
+        fill="#4a5a80" text-anchor="middle" letter-spacing="0.5">
+    This certifies that the following website has been audited and found compliant
+  </text>
+
+  <!-- Hostname box -->
+  <rect x="180" y="204" width="440" height="50" rx="8"
+        fill="rgba(61,126,245,0.07)" stroke="rgba(61,126,245,0.22)" stroke-width="1"/>
+  <text x="400" y="237" font-family="'Courier New', Courier, monospace" font-size="22"
+        font-weight="bold" fill="#a5b4fc" text-anchor="middle">ico.org.uk</text>
+
+  <!-- Score ring -->
+  <circle cx="400" cy="325" r="54" fill="none" stroke="url(#gold)" stroke-width="3.5"
+          filter="url(#glow)"/>
+  <circle cx="400" cy="325" r="47" fill="#131929"/>
+  <text x="400" y="316" font-family="Arial, sans-serif" font-size="38" font-weight="bold"
+        fill="url(#gold)" text-anchor="middle">100</text>
+  <text x="400" y="334" font-family="Arial, sans-serif" font-size="13"
+        fill="#4a5a80" text-anchor="middle">/ 100</text>
+  <text x="400" y="349" font-family="Arial, sans-serif" font-size="9"
+        fill="#2a3050" text-anchor="middle" letter-spacing="1">COMPLIANCE SCORE</text>
+
+  <!-- Compliant badge -->
+  <rect x="316" y="392" width="168" height="28" rx="14"
+        fill="rgba(34,197,94,0.1)" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
+  <text x="400" y="411" font-family="Arial, sans-serif" font-size="13" font-weight="bold"
+        fill="#22c55e" text-anchor="middle">✅  COMPLIANT</text>
+
+  <!-- Description -->
+  <text x="400" y="450" font-family="Arial, sans-serif" font-size="12"
+        fill="#2e3a55" text-anchor="middle">
+    with the General Data Protection Regulation (GDPR) and India's
+  </text>
+  <text x="400" y="466" font-family="Arial, sans-serif" font-size="12"
+        fill="#2e3a55" text-anchor="middle">
+    Digital Personal Data Protection (DPDP) Act 2023
+  </text>
+
+  <!-- Footer -->
+  <text x="170" y="500" font-family="Arial, sans-serif" font-size="11" fill="#2a3050">
+    Audited on: 05 March 2026
+  </text>
+  <text x="400" y="500" font-family="Arial, sans-serif" font-size="11"
+        fill="#2a3050" text-anchor="middle">ConsentFair v1.4.0</text>
+  <text x="630" y="500" font-family="Arial, sans-serif" font-size="11"
+        fill="#2a3050" text-anchor="end">Auditor: Nikita Tapali</text>
+
+  <text x="400" y="530" font-family="Arial, sans-serif" font-size="9"
+        fill="#181f30" text-anchor="middle">
+    github.com/NIKITATAPALI/ConsentFair  ·  Amity University  ·  For informational purposes only. Not formal legal counsel.
+  </text>
+</svg>

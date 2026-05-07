@@ -1,0 +1,5 @@
+Timestamp,Domain,Sector,Accept_Clicks_Ka,Reject_Clicks_Kr,CAI_Score,Risk_Rating,Detected_Patterns,Forensic_Notes
+2026-01-15 10:22:14,hyundai-motorsport.com,Corporate,1,1.5,0.5,Low Risk,Symmetric Design,Relative symmetry observed; equal visual weight for Accept and Settings.
+2026-01-18 14:45:02,puma.com,E-commerce,1,3.5,2.5,High Risk,"DP-VM, DP-RM",Reject absent on primary banner; hidden in secondary ghost-button menu.
+2026-01-22 09:12:33,bbc.com,News/Media,1,3.5,2.5,High Risk,"DP-IF, DP-RM",Legitimate Interest toggles add significant interaction tax in settings.
+2026-01-25 16:30:55,theguardian.com,News/Media,1,4.5,3.5,Very High Risk,"DP-PB, DP-RM",Purpose bundling extreme; 10 distinct interactions for full opt-out.

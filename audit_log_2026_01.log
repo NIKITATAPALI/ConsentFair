@@ -1,0 +1,12 @@
+[2026-01-18 14:40:01] [INFO] Initializing ConsentFair Forensic Engine v1.4.2
+[2026-01-18 14:42:15] [AUDIT] Starting scan on domain: puma.com
+[2026-01-18 14:42:16] [DETECT] Banner found via Selector Strategy 1: "#onetrust-banner-sdk"
+[2026-01-18 14:42:17] [DETECT] Accept Button identified: "Accept All" (Style: bg=#000, color=#fff)
+[2026-01-18 14:42:17] [DETECT] Reject Button missing in primary view.
+[2026-01-18 14:42:18] [DETECT] Secondary link found: "Manage Settings"
+[2026-01-18 14:42:20] [CALC] k_a = 1, k_r = 4. CAI = 3.0
+[2026-01-18 14:42:21] [RULE] Triggered DP-RM (Roach Motel) - Severity: HIGH
+[2026-01-18 14:42:21] [RULE] Triggered DP-VM (Visual Misdirection) - Severity: HIGH
+[2026-01-18 14:42:22] [SCORE] Final DPSS: 35. Tier: NON-COMPLIANT
+[2026-01-18 14:42:23] [SNAPSHOT] Saving DOM artifact to evidence_locker/dom_snapshot_puma.txt
+[2026-01-18 14:45:02] [AUDIT] Completed scan. Report generated: reports/puma_forensic_report.json
