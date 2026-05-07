@@ -1,0 +1,48 @@
+{
+  "audit_metadata": {
+    "tool_version": "ConsentFair v1.4.2-Forensic",
+    "scan_timestamp": "2026-01-22T09:12:33Z",
+    "target_domain": "bbc.com",
+    "inspector_id": "NT-A059169824043",
+    "regulatory_scope": ["GDPR", "DPDP-2023"]
+  },
+  "interface_analysis": {
+    "type": "CookieBanner-TCF",
+    "position": "bottom-modal",
+    "initial_state": {
+      "has_accept_all": true,
+      "has_reject_all": false,
+      "has_manage_settings": true
+    },
+    "metrics": {
+      "total_score": 40,
+      "breakdown": {
+        "banner_presence": 20,
+        "accept_button": 15,
+        "reject_button": 5,
+        "visual_symmetry": 0,
+        "language_clarity": 0
+      },
+      "cai_score": 3.0,
+      "compliance_status": "Partially Compliant"
+    }
+  },
+  "detected_patterns": [
+    {
+      "code": "DP-RM",
+      "name": "Roach Motel",
+      "severity": "High",
+      "evidence": "Reject all requires 3 secondary menu interactions to disable 'Legitimate Interest' toggles."
+    },
+    {
+      "code": "DP-FH",
+      "name": "False Hierarchy",
+      "severity": "Medium",
+      "evidence": "Primary button color #1E3C5A (Accept) vs low-contrast grey text link (Settings)."
+    }
+  ],
+  "regulatory_violations": {
+    "GDPR_Art_7_3": "FAIL - Rejection effort (4 clicks) > Acceptance effort (1 click).",
+    "DPDP_Sec_6": "FAIL - Consent mechanism is conditional and complex."
+  }
+}

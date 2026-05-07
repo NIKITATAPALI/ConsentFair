@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConsentFair Forensic Report Viewer</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header { border-bottom: 2px solid #2c3e50; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { color: #2c3e50; margin: 0; font-size: 24px; }
+        .badge { padding: 5px 12px; border-radius: 20px; color: white; font-weight: bold; font-size: 12px; }
+        .tier-poor { background-color: #e74c3c; }
+        .tier-moderate { background-color: #f39c12; }
+        .tier-high { background-color: #27ae60; }
+        .section-title { background: #f8f9fa; padding: 10px; border-left: 4px solid #3498db; margin: 20px 0 10px; font-weight: bold; color: #34495e; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .data-row { margin: 8px 0; font-size: 14px; }
+        .label { font-weight: bold; color: #7f8c8d; width: 140px; display: inline-block; }
+        .issue-card { border: 1px solid #eee; padding: 15px; border-radius: 5px; margin-bottom: 10px; }
+        .issue-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .severity { font-size: 11px; text-transform: uppercase; font-weight: bold; }
+        .severity-high { color: #e74c3c; }
+        .severity-medium { color: #f39c12; }
+        .code { font-family: monospace; background: #eee; padding: 2px 5px; border-radius: 3px; font-size: 13px; }
+        pre { background: #272822; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div>
+            <h1>⚖️ ConsentFair Forensic Audit</h1>
+            <div id="domain-name" style="color: #3498db; font-weight: bold; margin-top: 5px;">AUDIT REPORT</div>
+        </div>
+        <div id="compliance-badge" class="badge">SCANNING...</div>
+    </div>
+
+    <div class="grid">
+        <div>
+            <div class="section-title">Audit Metadata</div>
+            <div class="data-row"><span class="label">Inspector ID:</span> <span id="inspector-id">--</span></div>
+            <div class="data-row"><span class="label">Timestamp:</span> <span id="timestamp">--</span></div>
+            <div class="data-row"><span class="label">Tool Version:</span> <span id="version">--</span></div>
+            <div class="section-title">Interface Metrics</div>
+            <div class="data-row"><span class="label">Total Score:</span> <span id="score" style="font-weight: bold;">--</span> / 100</div>
+            <div class="data-row"><span class="label">CAI (Asymmetry):</span> <span id="cai">--</span></div>
+        </div>
+        <div>
+            <div class="section-title">Score Breakdown</div>
+            <div id="breakdown-list"></div>
+        </div>
+    </div>
+
+    <div class="section-title">Detected Dark Patterns & Violations</div>
+    <div id="issues-list"></div>
+
+    <div class="section-title">Raw Forensic JSON Artifact</div>
+    <pre id="raw-json"></pre>
+</div>
+
+<script>
+    // In a real scenario, this would load the JSON file. 
+    // Here, we provide instructions to the user.
+    console.log("To view a specific report, copy the JSON content and replace the 'reportData' variable in this script.");
+    
+    // Example data (BBC)
+    const reportData = {
+        "audit_metadata": {
+            "tool_version": "ConsentFair v1.4.2-Forensic",
+            "scan_timestamp": "2026-01-22T09:12:33Z",
+            "target_domain": "bbc.com",
+            "inspector_id": "NT-A059169824043"
+        },
+        "metrics": {
+            "total_score": 40,
+            "breakdown": {
+                "banner_presence": 20,
+                "accept_button": 15,
+                "reject_button": 5,
+                "visual_symmetry": 0,
+                "language_clarity": 0
+            },
+            "cai_score": 3.0,
+            "compliance_status": "Partially Compliant"
+        },
+        "detected_patterns": [
+            { "code": "DP-RM", "name": "Roach Motel", "severity": "High", "evidence": "Reject all requires 3 secondary menu interactions to disable 'Legitimate Interest' toggles." },
+            { "code": "DP-FH", "name": "False Hierarchy", "severity": "Medium", "evidence": "Primary button color #1E3C5A (Accept) vs low-contrast grey text link (Settings)." }
+        ]
+    };
+
+    function render(data) {
+        document.getElementById('domain-name').innerText = data.audit_metadata.target_domain.toUpperCase();
+        document.getElementById('inspector-id').innerText = data.audit_metadata.inspector_id;
+        document.getElementById('timestamp').innerText = data.audit_metadata.scan_timestamp;
+        document.getElementById('version').innerText = data.audit_metadata.tool_version;
+        document.getElementById('score').innerText = data.metrics.total_score;
+        document.getElementById('cai').innerText = data.metrics.cai_score;
+        
+        const badge = document.getElementById('compliance-badge');
+        badge.innerText = data.metrics.compliance_status.toUpperCase();
+        badge.className = 'badge ' + (data.metrics.total_score < 40 ? 'tier-poor' : data.metrics.total_score < 70 ? 'tier-moderate' : 'tier-high');
+
+        const breakdown = document.getElementById('breakdown-list');
+        for (const [key, val] of Object.entries(data.metrics.breakdown)) {
+            breakdown.innerHTML += `<div class="data-row"><span class="label">${key.replace(/_/g, ' ')}:</span> ${val} pts</div>`;
+        }
+
+        const issues = document.getElementById('issues-list');
+        data.detected_patterns.forEach(p => {
+            issues.innerHTML += `
+                <div class="issue-card">
+                    <div class="issue-header">
+                        <span style="font-weight: bold;">${p.name} <span class="code">${p.code}</span></span>
+                        <span class="severity ${p.severity === 'High' ? 'severity-high' : 'severity-medium'}">${p.severity} SEVERITY</span>
+                    </div>
+                    <div style="font-size: 13px; color: #555; margin-top: 5px;">${p.evidence}</div>
+                </div>
+            `;
+        });
+
+        document.getElementById('raw-json').innerText = JSON.stringify(data, null, 4);
+    }
+
+    render(reportData);
+</script>
+
+</body>
+</html>

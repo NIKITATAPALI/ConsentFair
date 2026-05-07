@@ -1,0 +1,13 @@
+<!-- ConsentFair Forensic DOM Snapshot: Puma.com -->
+<!-- Captured: 2026-01-18 14:42:23 -->
+<div id="onetrust-banner-sdk" class="ot-banner-container" style="display: block; opacity: 1;">
+  <div class="ot-content">
+    <h2 class="ot-header">We value your privacy</h2>
+    <p>We use cookies to enhance your experience. By clicking "Accept All", you agree to our use of cookies.</p>
+  </div>
+  <div class="ot-actions-container">
+    <button id="onetrust-accept-btn-handler" style="background-color: #000; color: #fff; padding: 15px; width: 100%;">Accept All</button>
+    <a href="/settings" class="ot-settings-link" style="color: #666; font-size: 12px; margin-top: 10px;">Manage Settings</a>
+  </div>
+</div>
+<!-- INSPECTOR NOTE: No explicit REJECT button found in this layer. Forced navigation to /settings required for rejection. -->

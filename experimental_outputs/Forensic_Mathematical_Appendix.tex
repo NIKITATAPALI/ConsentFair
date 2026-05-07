@@ -1,0 +1,78 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{xcolor}
+\usepackage{geometry}
+
+\geometry{margin=1in}
+
+\title{Appendix: Forensic Mathematical Framework and Heuristic Algorithms for the ConsentFair Detection Engine}
+\author{Nikita Tapali (A059169824043) \\ Amity Institute of Forensic Sciences}
+\date{May 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+This appendix provides the formal mathematical derivations and computational logic implemented in the \textit{ConsentFair} framework. These metrics are used to quantify interactional friction and deceptive choice architecture in cookie consent interfaces.
+
+\section{Core Metrics}
+
+\subsection{Consent Asymmetry Index (CAI)}
+The CAI quantifies the relative interactional cost between the "Accept" path and the "Reject" path.
+\begin{equation}
+\text{CAI} = \frac{k_r - k_a}{k_a}
+\end{equation}
+Where:
+\begin{itemize}
+    \item $k_a$: The minimum number of distinct user interactions (clicks/toggles) required to accept all cookies.
+    \item $k_r$: The minimum number of distinct user interactions required to reject all non-essential cookies.
+\end{itemize}
+
+\subsection{Dark Pattern Severity Score (DPSS)}
+The DPSS is a cumulative index of manipulative intensity, calculated on a scale of 0--100 using an additive heuristic model.
+\begin{equation}
+\text{DPSS} = \sum_{i=1}^{n} B_i + S_{sym} + L_{clarity}
+\end{equation}
+Where:
+\begin{itemize}
+    \item $B_i$: Functional existence scores (Banner=20, Accept Button=15, Reject Button=25).
+    \item $S_{sym}$: Visual Symmetry Score (Max 25), with deductions for background mismatch (-10), size mismatch (-5), and font weight mismatch (-5).
+    \item $L_{clarity}$: Linguistic Clarity Score (Max 15), with deductions for negative framing (-8) or ambiguous labeling (-5).
+\end{itemize}
+
+\section{Heuristic Algorithms}
+
+\subsection{Algorithm 1: Visual Saliency Misdirection Detection}
+\begin{algorithm}
+\caption{Detection of Visual Misdirection (DP-VM)}
+\begin{algorithmic}[1]
+\State \textbf{Input:} AcceptButtonStyle $S_a$, RejectButtonStyle $S_r$
+\State $\Delta_{bg} \gets \text{CompareColor}(S_a.bg, S_r.bg)$
+\State $\Delta_{sz} \gets \text{CompareSize}(S_a.area, S_r.area)$
+\State $\text{VisualBias} \gets \text{False}$
+\If {$\Delta_{bg} > \text{Threshold}_{color}$ \textbf{or} $\Delta_{sz} > \text{Threshold}_{size}$}
+    \State $\text{VisualBias} \gets \text{True}$
+    \State \textbf{Report} "Pattern DP-VM: High Saliency Bias"
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Algorithm 2: Effort Asymmetry (Roach Motel) Detection}
+\begin{algorithm}
+\caption{Detection of Roach Motel (DP-RM)}
+\begin{algorithmic}[1]
+\State \textbf{Input:} DOMNode $Banner$
+\State $k_a \gets 1$ \Comment{Assumed 1-click accept}
+\State $k_r \gets \text{FindMinPathToReject}(Banner)$
+\If {$k_r > k_a$}
+    \State $\text{CAI} \gets (k_r - k_a) / k_a$
+    \State \textbf{Report} "Pattern DP-RM: Interactional Friction Found"
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+\end{document}

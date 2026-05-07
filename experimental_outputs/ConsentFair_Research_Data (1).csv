@@ -1,0 +1,14 @@
+Hostname,URL,Score,Tier,Dark Patterns,CAI Score
+www.bbc.com,https://www.bbc.com/,0,Non-Compliant,NO_BANNER,N/A
+www.nytimes.com,https://www.nytimes.com/,90,Compliant,DP-VM,0
+www.instagram.com,https://www.instagram.com/,90,Compliant,DP-VM,0
+x.com,https://x.com/,0,Non-Compliant,NO_BANNER,N/A
+www.linkedin.com,https://www.linkedin.com/,0,Non-Compliant,NO_BANNER,N/A
+www.reddit.com,https://www.reddit.com/?rdt=64066,100,Compliant,,0
+www.netflix.com,https://www.netflix.com/no-en/,90,Compliant,DP-VM,0
+www.microsoft.com,https://www.microsoft.com/nb-no,75,Compliant,DP-FA,N/A
+www.apple.com,https://www.apple.com/,0,Non-Compliant,NO_BANNER,N/A
+open.spotify.com,https://open.spotify.com/,100,Compliant,,0
+www.ebay.com,https://www.ebay.com/,0,Non-Compliant,NO_BANNER,N/A
+edition.cnn.com,https://edition.cnn.com/,60,Partially Compliant,DP-FA; DP-RM,1
+www.theguardian.com,https://www.theguardian.com/europe,75,Compliant,DP-VM; DP-PB,0

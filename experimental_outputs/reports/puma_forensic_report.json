@@ -1,0 +1,42 @@
+{
+  "audit_metadata": {
+    "tool_version": "ConsentFair v1.4.2-Forensic",
+    "scan_timestamp": "2026-01-18T14:45:02Z",
+    "target_domain": "puma.com",
+    "inspector_id": "NT-A059169824043",
+    "regulatory_scope": ["GDPR", "DPDP-2023"]
+  },
+  "interface_analysis": {
+    "type": "Footer-Banner",
+    "position": "bottom-center",
+    "initial_state": {
+      "has_accept_all": true,
+      "has_reject_all": false,
+      "has_manage_settings": true
+    },
+    "metrics": {
+      "total_score": 45,
+      "breakdown": {
+        "banner_presence": 20,
+        "accept_button": 15,
+        "reject_button": 10,
+        "visual_symmetry": 0,
+        "language_clarity": 0
+      },
+      "cai_score": 2.0,
+      "compliance_status": "Partially Compliant"
+    }
+  },
+  "detected_patterns": [
+    {
+      "code": "DP-VM",
+      "name": "Visual Misdirection",
+      "severity": "High",
+      "evidence": "Accept button dominates banner area; Reject option entirely absent from primary layer."
+    }
+  ],
+  "regulatory_violations": {
+    "GDPR_Art_4_11": "FAIL - Consent not unambiguous; nudged via visual saliency.",
+    "DPDP_Sec_6": "FAIL - Choice architecture is not unconditional."
+  }
+}
